@@ -37,13 +37,14 @@ function admin_menu_rucy()
 }
 function addRcSetting()
 {
-    $rc_opt_key = RC_SETTING_OPTION_KEY;
     $post = $_POST;
     $isCheckedPost = "";
     $isCheckedPage = "";
     $arrCustomPostTypes = "";
     $customPostTypes = "";
-    $error = false;
+    $errorClass = "form-invalid";
+    $message = array();
+    $error = 0;
     if(isset($post['page_options']))
     {
         $res = "";
@@ -52,42 +53,45 @@ function addRcSetting()
         {
             $res .= $post['rc_post'];
             $isCheckedPost = "checked";
+        } else {
+            $error += 1;
         }
         if(isset($post['rc_page']) && $post['rc_page'] == 'page') {
             $res .= "," . $post['rc_page'];
             $isCheckedPage = "checked";
+        }  else {
+            $error += 1;
+        }
+        if($error == 2){
+            $message['post_page'] = __("post or page is not allow.", RC_TXT_DOMAIN);
         }
         if(isset($post['rc_custom_post']) && $post['rc_custom_post'] != "") {
             $customCheck = explode(',', $post['rc_custom_post']);
-            $i = 0;
+            var_dump($customCheck);
             foreach ($customCheck as $check){
-                // TODO: invalid post
-                if(!preg_match('/^page$/', $check)
-                && !preg_match('/^post$/', $check)
-                && !preg_match('/[a-zA-Z0-9_-]/', $check))
+                if(preg_match('/^page$/', $check) || preg_match('/^post$/', $check))
                 {
-                   $i++;
+                    $message['custom_post'] = __('Do not input "post" or "page". ', RC_TXT_DOMAIN);
+                } else if(!preg_match('/[a-zA-Z0-9_-]/', $check)) {
+                    $message['custom_post'] = __("Please input alphabet or numeric. And do not input sequencial commas.", RC_TXT_DOMAIN);
                 }
-            }
-            if($i > 0)
-            {
-                $error = true;
             }
             $res .= "," . $post['rc_custom_post'];
             $customPostTypes = $post['rc_custom_post'];
         }
-        if($res != "" && $error == false)
+        if($res != "" && count($message) == 0)
         {
-            update_option($rc_opt_key, $res);
+            update_option(RC_SETTING_OPTION_KEY, $res);
         }
     } else {
+        $message = array();
         $arrSetting = getRcSetting();
         $isCheckedPost = (in_array('post', $arrSetting) == TRUE) ? 'checked' : "";
         $isCheckedPage = (in_array('page', $arrSetting) == TRUE) ? 'checked' : "";
         $arrCustomPostTypes = array();
         foreach ($arrSetting as $v)
         {
-            if($v !== "post" && $v !== "page")
+            if(!in_array($v, array('post','page')))
             {
                 array_push($arrCustomPostTypes, $v);
             }
@@ -98,33 +102,39 @@ function addRcSetting()
 <div class="wrap">
     <h2>Rucy Settings</h2>
     <p>Configure content types reservation update.</p>
-        <?php
-        if($error)
-        {
-            echo '<div class="form-invalid"><b>'._e('error','reserv-post').'!</b>'._e('post or page is require.','reserv-post').'</div>';
-        }
-        ?>
     <form method="post" action="#">
         <?php wp_nonce_field('update-options'); ?>
         <table class="form-table">
-            <tr>
+            <tr class="<?php echo (isset($message['post_page']) == true) ? $errorClass : ""; ?>">
                 <th><?php _e('post type','reserv-post') ?><br><small>*<?php _e('Require','reserv-post') ?></small></th>
                 <td>
                     <ul>
-                        <li><label for="rc_post"><input type="checkbox" name="rc_post" value="post" <?php echo $isCheckedPost ?>><?php _e('post','reserv-post') ?></label></li>
-                        <li><label for="rc_page"><input type="checkbox" name="rc_page" value="page" <?php echo $isCheckedPage ?>><?php _e('page','reserv-post') ?></label></li>
+                        <li><label for="rc_post"><input type="checkbox" id="rc_post" name="rc_post" value="post" <?php echo $isCheckedPost ?>><?php _e('post',RC_TXT_DOMAIN) ?></label></li>
+                        <li><label for="rc_page"><input type="checkbox" id="rc_page" name="rc_page" value="page" <?php echo $isCheckedPage ?>><?php _e('page',RC_TXT_DOMAIN) ?></label></li>
                     </ul>
+                    <?php 
+                        if(isset($message['post_page']))
+                        {
+                            echo '<p>'.$message['post_page'].'</p>';
+                        }
+                    ?>
                 </td>
             </tr>
-            <tr>
-                <th><?php _e('custom post type','reserv-post') ?></th>
+            <tr class="<?php echo (isset($message['custom_post']) == true) ? $errorClass : ""; ?>">
+                <th><?php _e('custom post type',RC_TXT_DOMAIN) ?></th>
                 <td>
-                    <input type="text" value="<?php echo $customPostTypes ?>" name="rc_custom_post" placeholder="<?php _e('Separated by commas','reserv-post') ?>">
+                    <input type="text" value="<?php echo $customPostTypes ?>" name="rc_custom_post" placeholder="<?php _e('Separated by commas',RC_TXT_DOMAIN) ?>">
+                    <?php 
+                        if(isset($message['custom_post']))
+                        {
+                            echo '<p>'.$message['custom_post'].'</p>';
+                        }
+                    ?>
                 </td>
             </tr>
         </table>
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="<?php echo $rc_opt_key ?>"/>
+        <input type="hidden" name="page_options" value="<?php echo RC_SETTING_OPTION_KEY ?>"/>
         <p class="submit">
             <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
