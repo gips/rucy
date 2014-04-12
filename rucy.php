@@ -19,15 +19,211 @@ add_action('admin_enqueue_scripts','rc_load_jscss');
 function rc_load_jscss()
 {
     global $hook_suffix;
-    $files = array('post.php','post-new.php');
-    if(in_array($hook_suffix, $files))
+    if(in_array($hook_suffix, array('post.php','post-new.php',)))
     {
-        wp_register_style('rucy.css', RC_PLUGIN_URL . 'rucy.css',array(),'0.0.1');
+        wp_register_style('rucy.css', RC_PLUGIN_URL . '/css/rucy.css',array(),'0.0.1');
         wp_enqueue_style('rucy.css');
-        wp_register_script('rucy.js', RC_PLUGIN_URL . 'rucy.js', array('jquery'), '0.0.1');
+        wp_register_script('rucy.js', RC_PLUGIN_URL . '/js/rucy.js', array('jquery'), '0.0.1');
         wp_enqueue_script('rucy.js');
     }
 }
+
+//
+function getRcMetas($post_id = "")
+{
+    $res = array();
+    if($post_id)
+    {
+        $res = array(
+            'content' => get_post_meta($post_id,'rc_reserv_content',true),
+            'accept' => get_post_meta($post_id,'rc_reserv_accept', true),
+            'date' => get_post_meta($post_id, 'rc_reserv_accept', true),
+        );
+    } else {
+        $res = array(
+            'content' => 'rc_reserv_content',
+            'accept' => 'rc_reserv_accept',
+            'date' => 'rc_reserv_date'
+        );
+    }
+}
+
+// add reserv_metabox
+add_action('admin_menu', 'add_rucy_metabox_out');
+function add_rucy_metabox_out()
+{
+    $acceptPostType = getRcSetting();
+    foreach ($acceptPostType as $postType)
+    {
+        add_meta_box('rucy_metabox','Reserve Update Content Y.','add_rucy_metabox_inside',$postType,'normal','high');
+    }
+    function add_rucy_metabox_inside()
+    {
+        $rcKeys = getRcMetas();
+        $rc_content_name = $rcKeys['content'];
+        $rc_accept_name = $rcKeys['accept'];
+        global $post;
+        $rcMetas = getRcMetas($post->ID);
+        $reserv_accept = $rcMetas['accept'];
+        $reserv_date = $rcMetas['date'];
+        if("" == $reserv_date)
+        {
+            $reserv_date = $post->post_date;
+        }
+        $reserv_date_arr = getdate(strtotime($reserv_date));
+        $reserv_content = $rcMetas['content'];
+        if("" == $reserv_content)
+        {
+            $reserv_content = $post->post_content;
+        }
+    ?>
+    <div id="rc-post-wrap" class="curtime">
+        <label class="rc_accept">
+            <input type="checkbox" name="<?php echo $rc_accept_name; ?>" value="1" <?php echo ($reserv_accept == "1") ? "checked" : ""; ?>> <?php _e('Accept reserve update content.',RC_TXT_DOMAIN) ?>
+        </label>
+        <div class="rc-datetime" id="timestamp">
+            <?php _e('UpdateTime',RC_TXT_DOMAIN) ?>:<b><?php echo date("Y/m/d @ H:i", strtotime($reserv_date)); ?></b>
+        </div>
+        <a href="#edit-reservdate" class="edit-timestamp rc-datetime-edit"><?php _e('Edit') ?></a>
+        <div class="rc-datetime-wrap">
+            <input type="text" size="4" maxlength="4" name="rc_year" value="<?php echo date('Y',$reserv_date_arr[0]); ?>"><?php echo '/' ?>
+            <select name="rc_month">
+                <?php
+                    for($i=1;$i<=12;$i++)
+                    {
+                        $m = sprintf("%02d",$i);
+                        $selected = ($m == date('m',$reserv_date_arr[0])) ? "selected" : "";
+                        echo '<option value="'.$m.'" '.$selected.'>'.$m.'</option>';
+                    }
+                ?>
+                </select><?php echo '/' ?>
+                <input type="text" size="2" maxlength="2" name="rc_day" value="<?php echo date('d',$reserv_date_arr[0]); ?>">
+                @ <input type="text" size="2" maxlength="2" name="rc_hour" value="<?php echo date('H',$reserv_date_arr[0]); ?>">:<input type="text" size="2" maxlength="2" name="rc_minutes" value="<?php echo date('i',$reserv_date_arr[0]); ?>">
+                <a href="#edit-reservdate" class="rc-datetime-update button"><?php _e('OK',RC_TXT_DOMAIN) ?></a>
+                <a href="#edit-reservdate" class="rc-datetime-cancel"><?php _e('Cancel',RC_TXT_DOMAIN) ?></a>
+        </div>
+        <?php
+            $dateArr = array(
+                'rc_year' => date('Y',$reserv_date_arr[0]),
+                'rc_month' => date('m',$reserv_date_arr[0]),
+                'rc_day' => date('d',$reserv_date_arr[0]),
+                'rc_hour' => date('H',$reserv_date_arr[0]),
+                'rc_minutes' => date('i',$reserv_date_arr[0])
+            );
+            foreach ($dateArr as $k => $v)
+            {
+                echo '<input type="hidden" name="'.$k.'_cr" id="'.$k.'_cr" value="'.$v.'">';
+            }
+        ?>
+    </div>
+<?php 
+    wp_editor($reserv_content, $rc_content_name);
+    }
+}
+
+// save post meta
+add_action('save_post','savePostmeta');
+function savePostmeta($post_id)
+{
+    if(isset($_POST) && isset($_POST['post_type']))
+    {
+        $rcKeys = getRcMetas();
+        $acceptPostType = getReservPostSetting();
+        foreach ($acceptPostType as $postType)
+        {
+            if($_POST['post_type'] == $postType)
+            {
+                $date = mktime($_POST['rc_hour'], $_POST['rc_minutes'], 00, $_POST['rc_month'], $_POST['rc_day'], $_POST['rc_year']);
+                if($date)
+                {
+                    $_POST[$rcKeys['date']] = date('Y-m-d H:i:s',$date);
+                } else {
+                    $_POST[$rcKeys['date']] = "";
+                }
+                $meta_keys = getRcMetas();
+            }
+        }
+        foreach ($meta_keys as $val)
+        {
+            savePostMetaBase($post_id, $val);
+        }
+        if($_POST['rc_reserv_date'] != "")
+        {
+            $reservDate = strtotime(get_gmt_from_date($_POST[$rcKeys['date']]) . " GMT");
+            if(in_array($_POST['post_type'], $acceptPostType))
+            {
+                wp_schedule_single_event($reservDate, 'rucy_update_reserved_content', array($post_id));
+            }
+        }
+    }
+}
+
+function savePostMetaBase($post_id, $post_metakey)
+{
+    if(isset($_POST))
+    {
+        $post_data = "";
+        if(isset($_POST[$post_metakey]))
+        {
+            $post_data = $_POST[$post_metakey];
+        }
+
+        if("" == get_post_meta($post_id, $post_metakey,true))
+        {
+            // new
+            add_post_meta($post_id, $post_metakey, $post_data,true);
+        } elseif ($post_data != get_post_meta($post_id, $post_metakey,true)) {
+            // update
+            update_post_meta($post_id, $post_metakey, $post_data);
+        } elseif("" == $post_data) {
+            // delete
+            delete_post_meta($post_id, $post_metakey);
+        }
+    }
+}
+
+// update post for wp-cron
+add_action('wp_reserv_content_update', 'updateReservedContent','10',1);
+function updateReservedContent($post_id)
+{
+    $rcMetas = getRcMetas($post_id);
+    if("1" == $rcMetas['accept'])
+    {
+        $updates = array(
+            'ID' => $post_id,
+            'post_content' => $rcMetas['content'],
+        );
+       wp_update_post($updates,true);
+    }
+    wp_clear_scheduled_hook('rucy_update_reserved_content', array($post_id));
+    $dels = getRcMetas();
+    foreach ($dels as $del)
+    {
+        delete_post_meta($post_id, $del);
+    }
+}
+
+// add reservation info at postlist
+function manageRucyCols($columns) {
+    $columns['subtitle'] = "reservation update content";
+    return $columns;
+}
+function addRucyCol($column_name, $post_id) {
+    $rcMetas = getRcMetas($post_id);
+    if($column_name == 'subtitle')
+    {
+        $s = $rcMetas['accept'];
+    }
+    if($s == "1")
+    {
+        echo $rcMetas['date'];
+    } else {
+        echo __('None');
+    }
+}
+add_filter('manage_posts_columns', 'manageRucyCols');
+add_action('manage_posts_custom_column', 'addRucyCol', 10, 2);
+
 
 // setting page
 add_action('admin_menu','admin_menu_rucy');
@@ -67,7 +263,6 @@ function addRcSetting()
         }
         if(isset($post['rc_custom_post']) && $post['rc_custom_post'] != "") {
             $customCheck = explode(',', $post['rc_custom_post']);
-            var_dump($customCheck);
             foreach ($customCheck as $check){
                 if(preg_match('/^page$/', $check) || preg_match('/^post$/', $check))
                 {
@@ -160,3 +355,23 @@ function getRcSetting($isArray = true)
     return $res;
 }
 
+// uninstall
+if(function_exists('register_uninstall_hook'))
+{
+    register_uninstall_hook(__FILE__, 'seeyaRucy');
+}
+
+function seeyaRucy()
+{
+    wp_clear_scheduled_hook('rucy_update_reserved_content');
+    delete_option(RC_SETTING_OPTION_KEY);
+    $allposts = get_posts('numberposts=-1&post_status=');
+    $meta_keys = getRcMetas();
+    foreach ($allposts as $postinfo)
+    {
+        foreach ($meta_keys as $k)
+        {
+            delete_post_meta($postinfo->ID, $k);
+        }
+    }
+}
