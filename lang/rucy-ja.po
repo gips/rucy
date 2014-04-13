@@ -1,0 +1,80 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: rucy\n"
+"POT-Creation-Date: 2014-04-14 01:23+0900\n"
+"PO-Revision-Date: 2014-04-14 01:23+0900\n"
+"Last-Translator: nita <nita@gips.jp>\n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../rucy.php:86
+msgid "Accept reserve update content."
+msgstr "予約更新を行う"
+
+#: ../rucy.php:89
+msgid "UpdateTime"
+msgstr "更新日時"
+
+#: ../rucy.php:91
+msgid "Edit"
+msgstr "編集"
+
+#: ../rucy.php:106
+msgid "OK"
+msgstr "OK"
+
+#: ../rucy.php:107
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: ../rucy.php:231
+msgid "None"
+msgstr "なし"
+
+#: ../rucy.php:273
+msgid "post or page is not allow."
+msgstr "カスタム投稿タイプにpostもしくはpageは入力できません。"
+
+#: ../rucy.php:280
+msgid "Do not input \"post\" or \"page\". "
+msgstr "postもしくはpageは入力できません。"
+
+#: ../rucy.php:282
+msgid "Please input alphabet or numeric. And do not input sequencial commas."
+msgstr "英数のみ入力してください。また、連続でカンマの入力はできません。"
+
+#: ../rucy.php:315
+msgid "post type"
+msgstr "投稿タイプ"
+
+#: ../rucy.php:315
+msgid "Require"
+msgstr "必須"
+
+#: ../rucy.php:318
+msgid "post"
+msgstr "投稿"
+
+#: ../rucy.php:319
+msgid "page"
+msgstr "固定ページ"
+
+#: ../rucy.php:330
+msgid "custom post type"
+msgstr "カスタム投稿タイプ"
+
+#: ../rucy.php:332
+msgid "Separated by commas"
+msgstr "カンマ区切りで入力"
+
+#: ../rucy.php:345
+msgid "Save Changes"
+msgstr "変更を保存"
