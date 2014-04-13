@@ -3,7 +3,7 @@
  * Plugin Name: Rucy
  * Plugin URI: https://github.com/gips/rucy
  * Description: update published content.
- * Version: 0.0.1
+ * Version: 0.1.0
  * Author: Nita
  * License: GPLv2 or later
  * Text Domain: rucy
@@ -13,8 +13,8 @@ define('RC_PLUGIN_URL',  plugin_dir_url(__FILE__));
 define('RC_SETTING_OPTION_KEY', 'rucy_post_type');
 define('RC_TXT_DOMAIN', 'rucy');
 define('RC_POSTTYPE_DEFAULT','post,page');
+load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang');
 
-// load_plugin_textdomain( RP_TXT_DOMAIN, false, 'rucy/lang');
 add_action('admin_enqueue_scripts','rc_load_jscss');
 function rc_load_jscss()
 {
@@ -28,24 +28,28 @@ function rc_load_jscss()
     }
 }
 
-//
+/**
+ * get rucy post_metas or post_meta keys.
+ * @param int $post_id
+ * @return array 
+ */
 function getRcMetas($post_id = "")
 {
-    $res = array();
-    if($post_id)
-    {
-        $res = array(
-            'content' => get_post_meta($post_id,'rc_reserv_content',true),
-            'accept' => get_post_meta($post_id,'rc_reserv_accept', true),
-            'date' => get_post_meta($post_id, 'rc_reserv_accept', true),
-        );
-    } else {
-        $res = array(
+    $base = array(
             'content' => 'rc_reserv_content',
             'accept' => 'rc_reserv_accept',
             'date' => 'rc_reserv_date'
-        );
+            );
+    if($post_id > 0)
+    {
+        foreach ($base as $key => $value)
+        {
+            $res[$key] = get_post_meta($post_id, $value, true);
+        }
+    } else {
+        $res = $base;
     }
+    return $res;
 }
 
 // add reserv_metabox
@@ -55,7 +59,7 @@ function add_rucy_metabox_out()
     $acceptPostType = getRcSetting();
     foreach ($acceptPostType as $postType)
     {
-        add_meta_box('rucy_metabox','Reserve Update Content Y.','add_rucy_metabox_inside',$postType,'normal','high');
+        add_meta_box('rucy_metabox','Rucy - Reservation Update Content -','add_rucy_metabox_inside',$postType,'normal','high');
     }
     function add_rucy_metabox_inside()
     {
@@ -128,7 +132,7 @@ function savePostmeta($post_id)
     if(isset($_POST) && isset($_POST['post_type']))
     {
         $rcKeys = getRcMetas();
-        $acceptPostType = getReservPostSetting();
+        $acceptPostType = getRcSetting();
         foreach ($acceptPostType as $postType)
         {
             if($_POST['post_type'] == $postType)
@@ -158,6 +162,12 @@ function savePostmeta($post_id)
     }
 }
 
+/**
+ * save, update, delete post_meta
+ * 
+ * @param int $post_id
+ * @param string $post_metakey
+ */
 function savePostMetaBase($post_id, $post_metakey)
 {
     if(isset($_POST))
@@ -205,7 +215,7 @@ function updateReservedContent($post_id)
 
 // add reservation info at postlist
 function manageRucyCols($columns) {
-    $columns['subtitle'] = "reservation update content";
+    $columns['subtitle'] = "Reservation Update Content";
     return $columns;
 }
 function addRucyCol($column_name, $post_id) {
@@ -223,6 +233,8 @@ function addRucyCol($column_name, $post_id) {
 }
 add_filter('manage_posts_columns', 'manageRucyCols');
 add_action('manage_posts_custom_column', 'addRucyCol', 10, 2);
+add_filter('manage_pages_columns', 'manageRucyCols');
+add_action('manage_pages_custom_column', 'addRucyCol', 10, 2);
 
 
 // setting page
@@ -244,7 +256,6 @@ function addRcSetting()
     if(isset($post['page_options']))
     {
         $res = "";
-        //TODO: validate
         if(isset($post['rc_post']) && $post['rc_post'] == 'post')
         {
             $res .= $post['rc_post'];
@@ -337,7 +348,12 @@ function addRcSetting()
 </div>
 <?php
 }
-
+/**
+ * get post type allowed rucy
+ * 
+ * @param boolean $isArray
+ * @return string
+ */
 function getRcSetting($isArray = true)
 {
     $rc_setting = get_option(RC_SETTING_OPTION_KEY);
@@ -358,10 +374,10 @@ function getRcSetting($isArray = true)
 // uninstall
 if(function_exists('register_uninstall_hook'))
 {
-    register_uninstall_hook(__FILE__, 'seeyaRucy');
+    register_uninstall_hook(__FILE__, 'goodbyeRucy');
 }
 
-function seeyaRucy()
+function goodbyeRucy()
 {
     wp_clear_scheduled_hook('rucy_update_reserved_content');
     delete_option(RC_SETTING_OPTION_KEY);
