@@ -13,6 +13,7 @@ define('RC_PLUGIN_URL',  plugin_dir_url(__FILE__));
 define('RC_SETTING_OPTION_KEY', 'rucy_post_type');
 define('RC_TXT_DOMAIN', 'rucy');
 define('RC_POSTTYPE_DEFAULT','post,page');
+define('RC_CRON_FOOK', 'rucy_update_reserved_content');
 load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang');
 
 add_action('admin_enqueue_scripts','rc_load_jscss');
@@ -36,9 +37,9 @@ function rc_load_jscss()
 function getRcMetas($post_id = "")
 {
     $base = array(
-            'content' => 'rc_reserv_content',
-            'accept' => 'rc_reserv_accept',
-            'date' => 'rc_reserv_date'
+        'accept' => 'rc_reserv_accept',
+        'content' => 'rc_reserv_content',
+        'date' => 'rc_reserv_date'
             );
     if($post_id > 0)
     {
@@ -59,14 +60,14 @@ function add_rucy_metabox_out()
     $acceptPostType = getRcSetting();
     foreach ($acceptPostType as $postType)
     {
-        add_meta_box('rucy_metabox','Rucy - Reservation Update Content -','add_rucy_metabox_inside',$postType,'normal','high');
+        add_meta_box('rucy_metabox','Rucy','add_rucy_metabox_inside',$postType,'normal','high');
     }
     function add_rucy_metabox_inside()
     {
+        global $post;
         $rcKeys = getRcMetas();
         $rc_content_name = $rcKeys['content'];
         $rc_accept_name = $rcKeys['accept'];
-        global $post;
         $rcMetas = getRcMetas($post->ID);
         $reserv_accept = $rcMetas['accept'];
         $reserv_date = $rcMetas['date'];
@@ -79,9 +80,10 @@ function add_rucy_metabox_out()
         if("" == $reserv_content)
         {
             $reserv_content = $post->post_content;
-        }
+        }        
     ?>
     <div id="rc-post-wrap" class="curtime">
+        <input type="hidden" name="schroeder" id="schroeder" value="<?php echo wp_create_nonce(plugin_basename(__FILE__)); ?>"/>
         <label class="rc_accept">
             <input type="checkbox" name="<?php echo $rc_accept_name; ?>" value="1" <?php echo ($reserv_accept == "1") ? "checked" : ""; ?>> <?php _e('Accept reserve update content.',RC_TXT_DOMAIN) ?>
         </label>
@@ -131,6 +133,12 @@ function savePostmeta($post_id)
 {
     if(isset($_POST) && isset($_POST['post_type']))
     {
+        if(isset($_POST['schroeder']) && !wp_verify_nonce($_POST['schroeder'], plugin_basename(__FILE__))){
+            return;
+        }
+        if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE){
+            return;
+        }
         $rcKeys = getRcMetas();
         $acceptPostType = getRcSetting();
         foreach ($acceptPostType as $postType)
@@ -144,10 +152,14 @@ function savePostmeta($post_id)
                 } else {
                     $_POST[$rcKeys['date']] = "";
                 }
-                $meta_keys = getRcMetas();
+                if(!isset($_POST[$rcKeys['accept']])){
+                    $_POST[$rcKeys['accept']]  = "0";
+                } else if($_POST[$rcKeys['accept']] != "1"){
+                    $_POST[$rcKeys['accept']] = "0";
+                }
             }
         }
-        foreach ($meta_keys as $val)
+        foreach ($rcKeys as $key => $val)
         {
             savePostMetaBase($post_id, $val);
         }
@@ -156,7 +168,7 @@ function savePostmeta($post_id)
             $reservDate = strtotime(get_gmt_from_date($_POST[$rcKeys['date']]) . " GMT");
             if(in_array($_POST['post_type'], $acceptPostType))
             {
-                wp_schedule_single_event($reservDate, 'rucy_update_reserved_content', array($post_id));
+                wp_schedule_single_event($reservDate, RC_CRON_FOOK, array($post_id));
             }
         }
     }
@@ -177,14 +189,10 @@ function savePostMetaBase($post_id, $post_metakey)
         {
             $post_data = $_POST[$post_metakey];
         }
-
-        if("" == get_post_meta($post_id, $post_metakey,true))
-        {
-            // new
-            add_post_meta($post_id, $post_metakey, $post_data,true);
-        } elseif ($post_data != get_post_meta($post_id, $post_metakey,true)) {
-            // update
-            update_post_meta($post_id, $post_metakey, $post_data);
+        $meta = get_post_meta($post_id, $post_metakey,true);
+       if ($post_data != $meta) {
+            // update or new
+            update_post_meta($post_id, $post_metakey, $post_data, $meta);
         } elseif("" == $post_data) {
             // delete
             delete_post_meta($post_id, $post_metakey);
@@ -205,9 +213,9 @@ function updateReservedContent($post_id)
         );
        wp_update_post($updates,true);
     }
-    wp_clear_scheduled_hook('rucy_update_reserved_content', array($post_id));
+    wp_clear_scheduled_hook(RC_CRON_FOOK, array($post_id));
     $dels = getRcMetas();
-    foreach ($dels as $del)
+    foreach ($dels as $key => $del)
     {
         delete_post_meta($post_id, $del);
     }
@@ -215,11 +223,12 @@ function updateReservedContent($post_id)
 
 // add reservation info at postlist
 function manageRucyCols($columns) {
-    $columns['subtitle'] = "Reservation Update Content";
+    $columns['subtitle'] = __("Reservation Update DateTime", RC_TXT_DOMAIN);
     return $columns;
 }
 function addRucyCol($column_name, $post_id) {
     $rcMetas = getRcMetas($post_id);
+    $s = "";
     if($column_name == 'subtitle')
     {
         $s = $rcMetas['accept'];
@@ -231,11 +240,11 @@ function addRucyCol($column_name, $post_id) {
         echo __('None');
     }
 }
-add_filter('manage_posts_columns', 'manageRucyCols');
-add_action('manage_posts_custom_column', 'addRucyCol', 10, 2);
-add_filter('manage_pages_columns', 'manageRucyCols');
-add_action('manage_pages_custom_column', 'addRucyCol', 10, 2);
 
+foreach (array('pages','posts') as $p){
+    add_filter('manage_'.$p.'_columns', 'manageRucyCols');
+    add_action('manage_'.$p.'_custom_column', 'addRucyCol', 10, 2);    
+}
 
 // setting page
 add_action('admin_menu','admin_menu_rucy');
@@ -307,12 +316,12 @@ function addRcSetting()
 ?>
 <div class="wrap">
     <h2>Rucy Settings</h2>
-    <p>Configure content types reservation update.</p>
+    <p><?php _e('Configure content types reservation update.',RC_TXT_DOMAIN); ?></p>
     <form method="post" action="#">
         <?php wp_nonce_field('update-options'); ?>
         <table class="form-table">
             <tr class="<?php echo (isset($message['post_page']) == true) ? $errorClass : ""; ?>">
-                <th><?php _e('post type','reserv-post') ?><br><small>*<?php _e('Require','reserv-post') ?></small></th>
+                <th><?php _e('post type',RC_TXT_DOMAIN) ?><br><small>*<?php _e('Require',RC_TXT_DOMAIN) ?></small></th>
                 <td>
                     <ul>
                         <li><label for="rc_post"><input type="checkbox" id="rc_post" name="rc_post" value="post" <?php echo $isCheckedPost ?>><?php _e('post',RC_TXT_DOMAIN) ?></label></li>
@@ -379,15 +388,15 @@ if(function_exists('register_uninstall_hook'))
 
 function goodbyeRucy()
 {
-    wp_clear_scheduled_hook('rucy_update_reserved_content');
+    wp_clear_scheduled_hook(RC_CRON_FOOK);
     delete_option(RC_SETTING_OPTION_KEY);
     $allposts = get_posts('numberposts=-1&post_status=');
     $meta_keys = getRcMetas();
     foreach ($allposts as $postinfo)
     {
-        foreach ($meta_keys as $k)
+        foreach ($meta_keys as $k => $val)
         {
-            delete_post_meta($postinfo->ID, $k);
+            delete_post_meta($postinfo->ID, $val);
         }
     }
 }
