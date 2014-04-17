@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Rucy
  * Plugin URI: https://github.com/gips/rucy
- * Description: update published content.
+ * Description: Reservation Update (Published) Content.
  * Version: 0.1.0
  * Author: Nita
  * License: GPLv2 or later
@@ -354,6 +354,12 @@ function addRcSetting()
             <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
         </p>
     </form>
+    <h3><?php _e("Contact",RC_TXT_DOMAIN) ?></h3>
+    <p>
+    <?php _e('Rucy is maintained by <a href="http://profiles.wordpress.org/gips-nita/">nita</a>.<br>', RC_TXT_DOMAIN) ?>
+    <?php _e('If you have found a bug or would like to make a suggestion or contribution why not join the <a href="http://wordpress.org/extend/themes/contact/">theme-reviewers mailing list</a><br />',RC_TXT_DOMAIN);?>
+    </p>
+        <?php // echo pp ?>
 </div>
 <?php
 }
@@ -399,4 +405,11 @@ function goodbyeRucy()
             delete_post_meta($postinfo->ID, $val);
         }
     }
+}
+
+// link to setting
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'helloRucy');
+function helloRucy($links){
+    $links[] = '<a href="' . get_admin_url(null, 'options-general.php?page=rucy') . '">' . __('Settings') . '</a>';
+    return $links;
 }
