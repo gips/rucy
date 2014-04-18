@@ -191,10 +191,8 @@ function savePostMetaBase($post_id, $post_metakey)
         }
         $meta = get_post_meta($post_id, $post_metakey,true);
        if ($post_data != $meta) {
-            // update or new
             update_post_meta($post_id, $post_metakey, $post_data, $meta);
         } elseif("" == $post_data) {
-            // delete
             delete_post_meta($post_id, $post_metakey);
         }
     }
@@ -359,7 +357,6 @@ function addRcSetting()
     <?php _e('Rucy is maintained by <a href="http://profiles.wordpress.org/gips-nita/">nita</a>.<br>', RC_TXT_DOMAIN) ?>
     <?php _e('If you have found a bug or would like to make a suggestion or contribution why not join the <a href="http://wordpress.org/extend/themes/contact/">theme-reviewers mailing list</a><br />',RC_TXT_DOMAIN);?>
     </p>
-        <?php // echo pp ?>
 </div>
 <?php
 }
