@@ -3,7 +3,7 @@ Contributors: gips-nita
 Tags: post, update content, update post, update page, schedule update, reserve update, reservation update, rucy, Rucy
 Requires at least: 3.5+
 Tested up to: 3.9
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,12 @@ You can install this plugin directly from your WordPress dashboard:
 
 
 == Changelog ==
+
+= 0.1.1 =
+* 2014-04-25 
+* if accept checkbox unchecked , clean schedule update content. 
+* modified revision post_type do not add schedule update. 
+* add donation link.
 
 = 0.1.0 =
 * 2014-04-18 First release

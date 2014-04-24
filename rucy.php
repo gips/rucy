@@ -3,7 +3,7 @@
  * Plugin Name: Rucy
  * Plugin URI: https://github.com/gips/rucy
  * Description: Reservation Update (Published) Content.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Nita
  * License: GPLv2 or later
  * Text Domain: rucy
