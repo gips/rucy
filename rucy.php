@@ -163,13 +163,16 @@ function savePostmeta($post_id)
         {
             savePostMetaBase($post_id, $val);
         }
-        if($_POST['rc_reserv_date'] != "")
+        if($_POST[$rcKeys['accept']] == "1")
         {
             $reservDate = strtotime(get_gmt_from_date($_POST[$rcKeys['date']]) . " GMT");
-            if(in_array($_POST['post_type'], $acceptPostType))
+            if(in_array($_POST['post_type'], $acceptPostType) || $_POST['post_type'] != 'revision')
             {
                 wp_schedule_single_event($reservDate, RC_CRON_FOOK, array($post_id));
             }
+        } else if($_POST[$rcKeys['accept']] == "0") {
+            // delete schedule
+            wp_clear_scheduled_hook(RC_CRON_FOOK, array($post_id));
         }
     }
 }
@@ -273,7 +276,7 @@ function addRcSetting()
         if(isset($post['rc_page']) && $post['rc_page'] == 'page') {
             $res .= "," . $post['rc_page'];
             $isCheckedPage = "checked";
-        }  else {
+        } else {
             $error += 1;
         }
         if($error == 2){
@@ -355,8 +358,14 @@ function addRcSetting()
     <h3><?php _e("Contact",RC_TXT_DOMAIN) ?></h3>
     <p>
     <?php _e('Rucy is maintained by <a href="http://profiles.wordpress.org/gips-nita/">nita</a>.<br>', RC_TXT_DOMAIN) ?>
-    <?php _e('If you have found a bug or would like to make a suggestion or contribution why not join the <a href="http://wordpress.org/extend/themes/contact/">theme-reviewers mailing list</a><br />',RC_TXT_DOMAIN);?>
+    <?php _e('If you have found a bug or would like to make a suggestion or contribution why not join the <a href="https://wordpress.org/support/plugin/rucy">Support Form @ wordpress.org</a><br />',RC_TXT_DOMAIN);?>
+    <?php _e("Please consider donating if you like this plugin. I've put a lot of my free time into this plugin and donations help to justify it.<br />",RC_TXT_DOMAIN); ?>
     </p>
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_donations">
+        <input type="hidden" name="business" value="J2GV73KGN5MKN">
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"border="0" name="submit"alt="PayPal - The safer, easier way to pay online!">
+    </form>
 </div>
 <?php
 }
