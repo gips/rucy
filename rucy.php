@@ -141,30 +141,27 @@ function savePostmeta($post_id)
         }
         $rcKeys = getRcMetas();
         $acceptPostType = getRcSetting();
-        foreach ($acceptPostType as $postType)
+        if(in_array($_POST['post_type'], $acceptPostType))
         {
-            if($_POST['post_type'] == $postType)
+            $date = mktime($_POST['rc_hour'], $_POST['rc_minutes'], 00, $_POST['rc_month'], $_POST['rc_day'], $_POST['rc_year']);
+            if($date)
             {
-                $date = mktime($_POST['rc_hour'], $_POST['rc_minutes'], 00, $_POST['rc_month'], $_POST['rc_day'], $_POST['rc_year']);
-                if($date)
-                {
-                    $_POST[$rcKeys['date']] = date('Y-m-d H:i:s',$date);
-                } else {
-                    $_POST[$rcKeys['date']] = "";
-                }
-                if(!isset($_POST[$rcKeys['accept']])){
-                    $_POST[$rcKeys['accept']]  = "0";
-                } else if($_POST[$rcKeys['accept']] != "1"){
-                    $_POST[$rcKeys['accept']] = "0";
-                }
+                $_POST[$rcKeys['date']] = date('Y-m-d H:i:s',$date);
+            } else {
+                $_POST[$rcKeys['date']] = "";
             }
-        }
-        foreach ($rcKeys as $key => $val)
-        {
-            savePostMetaBase($post_id, $val);
+            if(!isset($_POST[$rcKeys['accept']])){
+                $_POST[$rcKeys['accept']]  = "0";
+            } else if($_POST[$rcKeys['accept']] != "1"){
+                $_POST[$rcKeys['accept']] = "0";
+            }
         }
         if($_POST[$rcKeys['accept']] == "1")
         {
+            foreach ($rcKeys as $key => $val)
+            {
+                savePostMetaBase($post_id, $val);
+            }
             $reservDate = strtotime(get_gmt_from_date($_POST[$rcKeys['date']]) . " GMT");
             if(in_array($_POST['post_type'], $acceptPostType) || $_POST['post_type'] != 'revision')
             {
@@ -311,7 +308,7 @@ function addRcSetting()
         $arrCustomPostTypes = array();
         foreach ($arrSetting as $v)
         {
-            if(!in_array($v, array('post','page')))
+            if(!in_array($v, $basicPostTypes))
             {
                 array_push($arrCustomPostTypes, $v);
             }
