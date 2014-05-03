@@ -219,6 +219,46 @@ function updateReservedContent($post_id)
     }
 }
 
+// add update message
+add_filter('post_updated_messages','addRcMessage');
+function addRcMessage($messages)
+{
+    global  $post, $post_ID;
+    $arrPostTypes = getRcSetting(true);
+    $postType = get_post_type($post);
+    if(in_array($postType, $arrPostTypes))
+    {
+        $rcMetas = getRcMetas($post_ID);
+        if("1" == $rcMetas['accept'])
+        {
+            $addMessageDate = repleceRcUpdateMsg(date('Y/m/d H:i',  strtotime($rcMetas['date'])));
+            $addMessage = '<br>' . __($addMessageDate, RC_TXT_DOMAIN);
+            // published
+            $messages[$postType][1] .= $addMessage;
+            $messages[$postType][4] .= $addMessage;
+            $messages[$postType][6] .= $addMessage;
+            // saved
+            $messages[$postType][7] .= $addMessage;
+            // submited
+            $messages[$postType][8] .= $addMessage;
+            // scheduled
+            $messages[$postType][9] .= $addMessage;
+        }
+    }
+    return $messages;
+}
+
+/**
+ * replace add messages in reservation date
+ * @param string $s
+ * @return string replaced string
+ */
+function repleceRcUpdateMsg($s) {
+    $str = 'registered reservation update content _RC_DATETIME_';
+    $res = strtr($str, array('_RC_DATETIME_' => $s));
+    return $res;
+}
+
 // add reservation info at postlist
 function manageRucyCols($columns) {
     $columns['subtitle'] = __("Reservation Update DateTime", RC_TXT_DOMAIN);
