@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: rucy\n"
-"POT-Creation-Date: 2014-04-18 03:32+0900\n"
-"PO-Revision-Date: 2014-04-18 03:33+0900\n"
+"POT-Creation-Date: 2014-05-04 02:48+0900\n"
+"PO-Revision-Date: 2014-05-04 02:48+0900\n"
 "Last-Translator: nita <nita@gips.jp>\n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -35,54 +35,90 @@ msgstr "OK"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: ../rucy.php:226
+#: ../rucy.php:235
+msgid "registered reservation update content _RC_DATETIME_"
+msgstr "_RC_DATETIME_ に更新するよう予約しました。"
+
+#: ../rucy.php:255
 msgid "Reservation Update DateTime"
 msgstr "予約更新日時"
 
-#: ../rucy.php:240
+#: ../rucy.php:269
 msgid "None"
 msgstr "なし"
 
-#: ../rucy.php:282
+#: ../rucy.php:312
 msgid "post or page is not allow."
 msgstr "カスタム投稿タイプにpostもしくはpageは入力できません。"
 
-#: ../rucy.php:289
+#: ../rucy.php:320
 msgid "Do not input \"post\" or \"page\". "
 msgstr "postもしくはpageは入力できません。"
 
-#: ../rucy.php:291
+#: ../rucy.php:322
 msgid "Please input alphabet or numeric. And do not input sequencial commas."
 msgstr "英数のみ入力してください。また、連続でカンマの入力はできません。"
 
-#: ../rucy.php:319
+#: ../rucy.php:324
+#, fuzzy
+msgid "Do not input \"attachment\" or \"revision\". "
+msgstr "postもしくはpageは入力できません。"
+
+#: ../rucy.php:352
 msgid "Configure content types reservation update."
 msgstr "予約更新する投稿タイプを設定してください。"
 
-#: ../rucy.php:324
+#: ../rucy.php:357
 msgid "post type"
 msgstr "投稿タイプ"
 
-#: ../rucy.php:324
+#: ../rucy.php:357
 msgid "Require"
 msgstr "必須"
 
-#: ../rucy.php:327
+#: ../rucy.php:360
 msgid "post"
 msgstr "投稿"
 
-#: ../rucy.php:328
+#: ../rucy.php:361
 msgid "page"
 msgstr "固定ページ"
 
-#: ../rucy.php:339
+#: ../rucy.php:372
 msgid "custom post type"
 msgstr "カスタム投稿タイプ"
 
-#: ../rucy.php:341
+#: ../rucy.php:374
 msgid "Separated by commas"
 msgstr "カンマ区切りで入力"
 
-#: ../rucy.php:354
+#: ../rucy.php:387
 msgid "Save Changes"
 msgstr "変更を保存"
+
+#: ../rucy.php:390
+msgid "Contact"
+msgstr ""
+
+#: ../rucy.php:392
+msgid ""
+"Rucy is maintained by <a href=\"http://profiles.wordpress.org/gips-nita/"
+"\">nita</a>.<br>"
+msgstr ""
+
+#: ../rucy.php:393
+msgid ""
+"If you have found a bug or would like to make a suggestion or contribution "
+"why not join the <a href=\"https://wordpress.org/support/plugin/rucy"
+"\">Support Form @ wordpress.org</a><br />"
+msgstr ""
+
+#: ../rucy.php:394
+msgid ""
+"Please consider donating if you like this plugin. I've put a lot of my free "
+"time into this plugin and donations help to justify it.<br />"
+msgstr ""
+
+#: ../rucy.php:451
+msgid "Settings"
+msgstr ""

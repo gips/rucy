@@ -3,7 +3,7 @@ Contributors: gips-nita
 Tags: post, update content, update post, update page, schedule update, reserve update, reservation update, rucy, Rucy
 Requires at least: 3.5+
 Tested up to: 3.9
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,12 @@ You can install this plugin directly from your WordPress dashboard:
 
 
 == Changelog ==
+
+= 0.1.2 =
+* 2014-05-04
+* add reservation datetime post updated messages.
+* add "revision" and "attachment" in invalid custom post type Setting
+* little refactoring
 
 = 0.1.1 =
 * 2014-04-25 

@@ -3,7 +3,7 @@
  * Plugin Name: Rucy
  * Plugin URI: https://github.com/gips/rucy
  * Description: Reservation Update (Published) Content.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: Nita
  * License: GPLv2 or later
  * Text Domain: rucy
@@ -231,8 +231,9 @@ function addRcMessage($messages)
         $rcMetas = getRcMetas($post_ID);
         if("1" == $rcMetas['accept'])
         {
-            $addMessageDate = repleceRcUpdateMsg(date('Y/m/d H:i',  strtotime($rcMetas['date'])));
-            $addMessage = '<br>' . __($addMessageDate, RC_TXT_DOMAIN);
+            $addMessageDate = date('Y/m/d @ H:i',  strtotime($rcMetas['date']));
+            $str = __('registered reservation update content _RC_DATETIME_',RC_TXT_DOMAIN);
+            $addMessage = '<br>' . strtr($str, array('_RC_DATETIME_' => $addMessageDate));
             // published
             $messages[$postType][1] .= $addMessage;
             $messages[$postType][4] .= $addMessage;
@@ -246,17 +247,6 @@ function addRcMessage($messages)
         }
     }
     return $messages;
-}
-
-/**
- * replace add messages in reservation date
- * @param string $s
- * @return string replaced string
- */
-function repleceRcUpdateMsg($s) {
-    $str = 'registered reservation update content _RC_DATETIME_';
-    $res = strtr($str, array('_RC_DATETIME_' => $s));
-    return $res;
 }
 
 // add reservation info at postlist
