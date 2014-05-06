@@ -7,11 +7,11 @@ jQuery(document).ready(function(){
     });
     // timecomboBOx close
     jQuery('.rc-datetime-update').on('click',function(){
-        var year = jQuery(':text[name="rc_year"]').val();
+        var year = jQuery('select[name="rc_year"]').val();
         var month = jQuery('select[name="rc_month"]').val();
-        var day = jQuery(':text[name="rc_day"]').val();
-        var hour = jQuery(':text[name="rc_hour"]').val();
-        var min = jQuery(':text[name="rc_minutes"]').val();
+        var day = jQuery('select[name="rc_day"]').val();
+        var hour = jQuery('select[name="rc_hour"]').val();
+        var min = jQuery('select[name="rc_minutes"]').val();
         newDate = new Date(year, month - 1, day, hour, min);
         if(newDate.getFullYear() != year || (1 + newDate.getMonth()) != month || newDate.getDate() != day || newDate.getMinutes() != min){
             jQuery('.rc-datetime-wrap').addClass('form-invalid');
@@ -37,11 +37,11 @@ jQuery(document).ready(function(){
         var hour = jQuery('#rc_hour_cr').val();
         var min = jQuery('#rc_minutes_cr').val();
         jQuery('.rc-datetime > b').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
-        jQuery(':text[name="rc_year"]').val(year);
+        jQuery('select[name="rc_year"]').val(year);
         jQuery('select[name="rc_month"]').val(month);
-        jQuery(':text[name="rc_day"]').val(day);
-        jQuery(':text[name="rc_hour"]').val(hour);
-        jQuery(':text[name="rc_minutes"]').val(min);
+        jQuery('select[name="rc_day"]').val(day);
+        jQuery('select[name="rc_hour"]').val(hour);
+        jQuery('select[name="rc_minutes"]').val(min);
         jQuery('.rc-datetime-wrap').slideUp('normal');
         jQuery('.rc-datetime-edit').show();
         return false;

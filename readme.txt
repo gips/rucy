@@ -41,7 +41,7 @@ You can install this plugin directly from your WordPress dashboard:
 * 2014-05-04
 * add reservation datetime post updated messages.
 * add "revision" and "attachment" in invalid custom post type Setting
-* little refactoring
+* refactoring
 
 = 0.1.1 =
 * 2014-04-25 

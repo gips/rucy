@@ -4,7 +4,7 @@
 .rc-datetime-wrap{
     display: none;
     margin: 10px 0;
-    height: 21px;
+    line-height: 28px;
 }
 .rc-datetime-wrap select{
     line-height: 14px;
