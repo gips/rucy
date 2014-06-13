@@ -12,12 +12,21 @@ jQuery(document).ready(function(){
         var day = jQuery('select[name="rc_day"]').val();
         var hour = jQuery('select[name="rc_hour"]').val();
         var min = jQuery('select[name="rc_minutes"]').val();
-        newDate = new Date(year, month - 1, day, hour, min);
+        var newDate = new Date(year, month - 1, day, hour, min);
+        var now = new Date();
+        var flg = false;
         if(newDate.getFullYear() != year || (1 + newDate.getMonth()) != month || newDate.getDate() != day || newDate.getMinutes() != min){
+            flg = false;
+        } else if (newDate.getTime() < now.getTime()) {
+            flg = false;
+        } else {
+            flg = true;
+        }
+        if(flg === true){
+            jQuery('.rc-datetime-wrap').removeClass('form-invalid');
+        } else {
             jQuery('.rc-datetime-wrap').addClass('form-invalid');
             return false;
-        } else {
-            jQuery('.rc-datetime-wrap').removeClass('form-invalid');
         }
         jQuery('.rc-datetime > b').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
         jQuery('#rc_year_cr').val(year);
