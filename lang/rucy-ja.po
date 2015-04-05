@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: rucy\n"
-"POT-Creation-Date: 2014-05-04 02:48+0900\n"
-"PO-Revision-Date: 2014-05-04 02:48+0900\n"
+"POT-Creation-Date: 2015-04-05 15:42+0900\n"
+"PO-Revision-Date: 2015-04-05 15:45+0900\n"
 "Last-Translator: nita <nita@gips.jp>\n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -15,110 +15,111 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../rucy.php:88
+#: ../rucy.php:105
 msgid "Accept reserve update content."
 msgstr "予約更新を行う"
 
-#: ../rucy.php:91
+#: ../rucy.php:108
 msgid "UpdateTime"
 msgstr "更新日時"
 
-#: ../rucy.php:93
+#: ../rucy.php:110
 msgid "Edit"
 msgstr "編集"
 
-#: ../rucy.php:108
+#: ../rucy.php:160
 msgid "OK"
 msgstr "OK"
 
-#: ../rucy.php:109
+#: ../rucy.php:161
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: ../rucy.php:235
+#: ../rucy.php:185
+msgid "Featured Image for Reservation Update"
+msgstr "予約更新用アイキャッチ画像"
+
+#: ../rucy.php:187
+msgid "Accept reserve update feature image."
+msgstr "アイキャッチ画像の予約更新を行う"
+
+#: ../rucy.php:189
+msgid "Set featured image Reservation"
+msgstr "予約更新用アイキャッチ画像を設定"
+
+#: ../rucy.php:189
+msgid "Set featured image for Reservation"
+msgstr "予約更新用アイキャッチ画像を登録する"
+
+#: ../rucy.php:190
+msgid "Remove Featured image for Reservation"
+msgstr "予約更新用アイキャッチ画像を削除する"
+
+#: ../rucy.php:335
 msgid "registered reservation update content _RC_DATETIME_"
 msgstr "_RC_DATETIME_ に更新するよう予約しました。"
 
-#: ../rucy.php:255
+#: ../rucy.php:355
 msgid "Reservation Update DateTime"
 msgstr "予約更新日時"
 
-#: ../rucy.php:269
+#: ../rucy.php:370
 msgid "None"
 msgstr "なし"
 
-#: ../rucy.php:312
+#: ../rucy.php:418
 msgid "post or page is not allow."
 msgstr "カスタム投稿タイプにpostもしくはpageは入力できません。"
 
-#: ../rucy.php:320
+#: ../rucy.php:426
 msgid "Do not input \"post\" or \"page\". "
 msgstr "postもしくはpageは入力できません。"
 
-#: ../rucy.php:322
+#: ../rucy.php:428
 msgid "Please input alphabet or numeric. And do not input sequencial commas."
 msgstr "英数のみ入力してください。また、連続でカンマの入力はできません。"
 
-#: ../rucy.php:324
+#: ../rucy.php:430
 #, fuzzy
 msgid "Do not input \"attachment\" or \"revision\". "
 msgstr "postもしくはpageは入力できません。"
 
-#: ../rucy.php:352
+#: ../rucy.php:457
+msgid "Rucy Settings"
+msgstr "予約更新設定"
+
+#: ../rucy.php:458
 msgid "Configure content types reservation update."
 msgstr "予約更新する投稿タイプを設定してください。"
 
-#: ../rucy.php:357
+#: ../rucy.php:463
 msgid "post type"
 msgstr "投稿タイプ"
 
-#: ../rucy.php:357
+#: ../rucy.php:463
 msgid "Require"
 msgstr "必須"
 
-#: ../rucy.php:360
+#: ../rucy.php:466
 msgid "post"
 msgstr "投稿"
 
-#: ../rucy.php:361
+#: ../rucy.php:467
 msgid "page"
 msgstr "固定ページ"
 
-#: ../rucy.php:372
+#: ../rucy.php:478
 msgid "custom post type"
 msgstr "カスタム投稿タイプ"
 
-#: ../rucy.php:374
+#: ../rucy.php:480
 msgid "Separated by commas"
 msgstr "カンマ区切りで入力"
 
-#: ../rucy.php:387
+#: ../rucy.php:493
 msgid "Save Changes"
 msgstr "変更を保存"
 
-#: ../rucy.php:390
-msgid "Contact"
-msgstr ""
-
-#: ../rucy.php:392
-msgid ""
-"Rucy is maintained by <a href=\"http://profiles.wordpress.org/gips-nita/"
-"\">nita</a>.<br>"
-msgstr ""
-
-#: ../rucy.php:393
-msgid ""
-"If you have found a bug or would like to make a suggestion or contribution "
-"why not join the <a href=\"https://wordpress.org/support/plugin/rucy"
-"\">Support Form @ wordpress.org</a><br />"
-msgstr ""
-
-#: ../rucy.php:394
-msgid ""
-"Please consider donating if you like this plugin. I've put a lot of my free "
-"time into this plugin and donations help to justify it.<br />"
-msgstr ""
-
-#: ../rucy.php:451
+#: ../rucy.php:552
 msgid "Settings"
-msgstr ""
+msgstr "設定"
