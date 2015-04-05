@@ -19,13 +19,3 @@
 .rc-datetime{
     display: inline-block;
 }
-
-.rc_feature_image {
-    max-width: 100%;
-    max-height: 80%;
-    width: 50%;
-    height: 50%;
-}
-.rc_remove_feature_image {
-    display: none;
-}

@@ -40,9 +40,7 @@ function get_rc_metas($post_id = "")
         'accept' => 'rc_reserv_accept',
         'content' => 'rc_reserv_content',
         'date' => 'rc_reserv_date',
-        'feature_img' => 'rc_reserv_feature_image',
-        'accept_feature_img' => 'rc_reserv_accept_feature_image',
-            );
+    );
     if($post_id > 0)
     {
         foreach ($base as $key => $value)
@@ -74,19 +72,6 @@ function add_rucy_metabox_inside()
     $rc_metas = get_rc_metas($post->ID);
     $reserv_accept = $rc_metas['accept'];
     $reserv_date = $rc_metas['date'];
-    $reserv_feature_name = $rc_keys['feature_img'];
-    $reserv_feature = $rc_metas['feature_img'];
-    $reserv_accept_feature_name = $rc_keys['accept_feature_img'];
-    $reserv_accept_feature = $rc_metas['accept_feature_img'];
-    $thumb_id = get_post_thumbnail_id($post->ID);
-    $reserv_feature_width = "255";
-    $reserv_feature_height = "255";
-    if($thumb_id){
-        $image = wp_get_attachment_image_src($thumb_id, 'thumbnail');
-        $reserv_feature_width = $image[1];
-        $reserv_feature_height = $image[2];
-    }
-    $reserv_feature_image = ($reserv_feature != '') ? '<img width="'.$reserv_feature_width.'" height="'.$reserv_feature_height.'" class="rc_feature_image" src="'.$reserv_feature.'" />' : '';
     if("" == $reserv_date)
     {
         $reserv_date = date_i18n('Y-m-d H:i:s');
@@ -176,22 +161,6 @@ function add_rucy_metabox_inside()
 </div>
 <?php 
     wp_editor($reserv_content, $rc_content_name);
-/*
- * support feature image reservation.
- */
-    if( current_theme_supports('post-thumbnails') ) {
-?>
-<fieldset>
-<h3><?php echo __('Featured Image for Reservation Update', RC_TXT_DOMAIN); ?></h3>
-<label class="rc_feature_accept">
-    <input type="checkbox" name="<?php echo $reserv_accept_feature_name; ?>" value="1" <?php echo ($reserv_accept_feature == "1") ? "checked" : ""; ?>> <?php _e('Accept reserve update feature image.', RC_TXT_DOMAIN); ?>
-</label>
-<p><a href="media-upload.php?type=image&TB_iframe=1&width=753&height=522&post_id=<?php echo $post->ID ?>" class="thickbox<?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>" id="rc_feature_image_upload" title="<?php _e('Set featured image Reservation', RC_TXT_DOMAIN) ?>"><?php echo ($reserv_feature_image != '') ? $reserv_feature_image : __('Set featured image for Reservation', RC_TXT_DOMAIN); ?></a></p>
-<p><a href="#" class="rc_remove_feature_image"><?php _e('Remove Featured image for Reservation', RC_TXT_DOMAIN) ?></a></p>
-<input type="hidden" id="rc_feature_image" name="<?php echo $reserv_feature_name ?>" value="<?php echo $reserv_feature ?>" />
-</fieldset>
-<?php 
-    }
 }
 
 // save post meta
@@ -272,13 +241,8 @@ function update_rc_reserved_content($post_id)
     {
         $updates = array(
             'ID' => (int)$post_id,
-            'post_content' => $rc_metas['content'],
+            'post_content' => apply_filters('the_content', $rc_metas['content']),
         );
-        // feature_image
-        if(isset($rc_metas['accept_feature_img']) && "1" == $rc_metas['accept_feature_img'] &&
-           isset($rc_metas['feature_img']) && $rc_metas['feature_img'] != '') {
-            update_rc_post_thumbnail($post_id, $rc_metas['feature_img']);
-        }
        $upp = wp_update_post($updates,true);
     }
     $dels = get_rc_metas();
@@ -287,36 +251,6 @@ function update_rc_reserved_content($post_id)
         delete_post_meta($post_id, $del);
     }
     wp_clear_scheduled_hook(RC_CRON_HOOK, array($post_id));
-}
-
-function update_rc_post_thumbnail($post_id, $reserved_post_thumb_path)
-{
-    include_once(ABSPATH . 'wp-admin/includes/image.php');
-    $upload_dir = wp_upload_dir();
-    $image_data = file_get_contents($reserved_post_thumb_path);
-    $file_name = basename($reserved_post_thumb_path);
-    if(wp_mkdir_p($upload_dir['path'])) {
-        $file = $upload_dir['path'] . '/' . $file_name;
-    } else {
-        $file = $upload_dir['basedir'] . '/' . $file_name;
-    }
-    file_put_contents($file, $image_data);
-    $wp_file_type = wp_check_filetype($file_name, null);
-    $attachment = array(
-        'post_mime_type' => $wp_file_type['type'],
-        'post_title' => sanitize_file_name($file_name),
-        'post_content' => '',
-        'post_status' => 'inherit',
-    );
-    delete_post_thumbnail($post_id);
-    $attachment_id = wp_insert_attachment($attachment, $file, $post_id);
-    $attach_data = wp_generate_attachment_metadata($attachment_id, $file);
-    if(!empty($attach_data) && !is_wp_error($attach_data)){
-        $res = wp_update_attachment_metadata($attachment_id, $attach_data);
-        set_post_thumbnail($post_id, $attachment_id);
-        
-        return $res;
-    }
 }
 
 // add update message
