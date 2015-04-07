@@ -56,29 +56,59 @@ jQuery(document).ready(function(){
         return false;
     });
     // reservation feature image uploader
-    window.original_send_to_editor = window.send_to_editor;
-    window.send_to_editor = function(html){
-        fileurl = jQuery('img', html).attr('src');
-        jQuery('#rc_feature_image').val(fileurl);
-        tb_remove();
-        if(jQuery('#rc_feature_image_upload').hasClass('has_image')){
-            jQuery('.rc_feature_image').attr('src', fileurl);
-            jQuery('.rc_remove_feature_image').show();
-        } else {
-            var img = jQuery('<img>').attr('src',fileurl).addClass('rc_feature_image size-thumbnail');
-            jQuery('#rc_feature_image_upload').addClass('has_image').html(img);
-            jQuery('.rc_remove_feature_image').show();
-        }
-    };
     if(jQuery('#rc_feature_image_upload').hasClass('has_image')){
         jQuery('.rc_remove_feature_image').show();
+    } else {
+        jQuery('.rc_remove_feature_image').hide();
     }
-    jQuery('.rc_remove_feature_image').on('click', function(){
-        jQuery('#rc_feature_image').val('');
-        var replace_text = jQuery('#rc_feature_image_upload').attr('title');
-        jQuery('#rc_feature_image_upload').html(replace_text);
-        jQuery(this).hide();
-        return false;
+    var rc_feature_uploader;
+    jQuery('#rc_feature_image_upload').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = jQuery(this).parents('.rc_feature_image_uploader');
+        if( rc_feature_uploader ){
+            rc_feature_uploader.open();
+            return;
+        }
+        /** @var object wp recieved form wordpress */
+        custom_uploader = wp.media({
+            title: "Set featured image for Reservation update",
+            button: {
+                text: "Choose Image"
+            },
+            multiple: false
+        });
+        custom_uploader.on( "select", function() {
+            var image = custom_uploader.state().get( "selection" );
+            var preview = jQuery( ".rc-feature-image-preview", parent );
+            image.each(function( file ) {
+                jQuery( "#rc_feature_image", parent ).val( file.toJSON().url );
+                var img = jQuery( "img", preview );
+                if ( img.length === 0 ) {
+                    preview.append( '<img src="' + file.toJSON().url + '" />' );
+                } else {
+                    img.attr( "src", file.toJSON().url );
+                }
+                preview.css( "display", "block" );
+            });
+        });
+        custom_uploader.open();
     });
+    // 削除
+    jQuery( ".rc_remove_feature_image" ).on( 'click', function( e ) {
+        
+        e.preventDefault();
+        e.stopPropagation();
+
+        var parent = jQuery(this).parents( ".rc_feature_image_uploader" );
+        jQuery( "#rc_feature_image", parent ).val('');
+        var preview = jQuery( ".rc-feature-image-preview", parent );
+
+        if (  jQuery( "img", preview ).length > 0 ) {
+            jQuery( "img", preview ).remove();
+        }
+        
+    });
+
 });
 

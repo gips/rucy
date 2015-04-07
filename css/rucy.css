@@ -22,10 +22,14 @@
 
 .rc_feature_image {
     max-width: 100%;
-    max-height: 80%;
     width: 50%;
-    height: 50%;
+    height: auto;
 }
 .rc_remove_feature_image {
     display: none;
+}
+.rc-feature-image-preview img {
+    max-width: 100%;
+    width: 50%;
+    height: auto;
 }

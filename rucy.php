@@ -228,9 +228,23 @@ function add_rucy_metabox_inside()
 <label class="rc_feature_accept">
     <input type="checkbox" name="<?php echo $reserv_accept_feature_name; ?>" value="1" <?php echo ($reserv_accept_feature == "1") ? "checked" : ""; ?>> <?php _e('Accept reserve update feature image.', RC_TXT_DOMAIN); ?>
 </label>
-<p><a href="media-upload.php?type=image&TB_iframe=1&width=753&height=522&post_id=<?php echo $post->ID ?>" class="thickbox<?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>" id="rc_feature_image_upload" title="<?php _e('Set featured image Reservation', RC_TXT_DOMAIN) ?>"><?php echo ($reserv_feature_image != '') ? $reserv_feature_image : __('Set featured image for Reservation', RC_TXT_DOMAIN); ?></a></p>
-<p><a href="#" class="rc_remove_feature_image"><?php _e('Remove Featured image for Reservation', RC_TXT_DOMAIN) ?></a></p>
+<div class="rc_feature_image_uploader">
+<!--<p><a href="media-upload.php?type=image&TB_iframe=1&width=753&height=522&post_id=<?php echo $post->ID ?>" class="thickbox<?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>" id="rc_feature_image_upload" title="<?php _e('Set featured image Reservation', RC_TXT_DOMAIN) ?>"><?php echo ($reserv_feature_image != '') ? $reserv_feature_image : __('Set featured image for Reservation', RC_TXT_DOMAIN); ?></a></p>-->
+<p><button id="rc_feature_image_upload" class="button rc-feature-uploader-button <?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>"><?php  _e('Set featured image for Reservation', RC_TXT_DOMAIN); ?></button></p>
+
+<div class="rc-feature-image-uploader__ctrl">
+    <div class="rc-feature-image-preview">
+        <?php
+        if ( ! empty( $reserv_feature_image ) ) {
+           echo $reserv_feature_image;
+        }
+        ?> 
+    </div>
+</div>
+
+<p><button class="button rc_remove_feature_image"><?php _e('Remove Featured image for Reservation', RC_TXT_DOMAIN) ?></button></p>
 <input type="hidden" id="rc_feature_image" name="<?php echo $reserv_feature_name ?>" value="<?php echo $reserv_feature ?>" />
+</div>
 </fieldset>
 <?php 
     }
