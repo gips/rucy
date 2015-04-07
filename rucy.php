@@ -29,6 +29,12 @@ function load_rc_jscss()
     }
 }
 
+// load js and css for pointer
+add_action('admin_menu', 'load_rc_pointer_menu');
+function load_rc_pointer_menu() {
+    wp_enqueue_script('wp-pointer');
+    wp_enqueue_style('wp-pointer');
+}
 /**
  * get rucy post_metas or post_meta keys.
  * @param int $post_id
@@ -42,6 +48,7 @@ function get_rc_metas($post_id = "")
         'date' => 'rc_reserv_date',
         'feature_img' => 'rc_reserv_feature_image',
         'accept_feature_img' => 'rc_reserv_accept_feature_image',
+        'accept_update' => 'rc_reserv_accept_post_update',
             );
     if($post_id > 0)
     {
@@ -173,6 +180,41 @@ function add_rucy_metabox_inside()
             echo '<input type="hidden" name="'.$k.'_cr" id="'.$k.'_cr" value="'.$v.'">';
         }
     ?>
+    <div id="rc-accept-update-update">
+        <label for="rc-accept-update-postdate">
+            <input id="rc-accept-update-postdate" type="checkbox" name="<?php echo $rc_keys['accept_update']; ?>" value="1" <?php echo ($rc_metas['accept_update'] == '1') ? "checked" : ""; ?> /> <?php _e('Accept reserve update post date.', RC_TXT_DOMAIN); ?>
+        </label>
+    </div>
+    <?php 
+    $dismissed = explode(',', get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
+    if(array_search('rc_update_postdate', $dismissed) === false):
+        $pointer_content = '<h3>' . __('Attention - reservation update UpdateTime', RC_TXT_DOMAIN) . '</h3>';
+        $pointer_content .= '<p>'.__("If update UpdateTime, this post\'s permalink is changed by permalink settings.", RC_TXT_DOMAIN).'</p>';
+    ?>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            // show notice pointer update postdate.
+            jQuery('#rc-accept-update-update').pointer({
+                content : '<?php echo $pointer_content ?>',
+                buttons : function(e, t){
+                    return jQuery('<a class="close" href="#"><?php _e('Do not show future', RC_TXT_DOMAIN) ?></a>').bind('click.pointer',function(e){
+                        e.preventDefault();
+                        t.element.pointer('close');
+                    });
+                },
+                position : { edge : "top", align : "left"},
+                close : function(){
+                    jQuery.post("<?php echo admin_url('admin-ajax.php'); ?>", {
+                        action : 'dismiss-wp-pointer',
+                        pointer : 'rc_update_postdate'
+                    });
+                }
+            }).pointer('open');
+        });
+    </script>
+    <?php 
+    endif;
+    ?>
 </div>
 <?php 
     wp_editor($reserv_content, $rc_content_name);
@@ -274,12 +316,21 @@ function update_rc_reserved_content($post_id)
             'ID' => (int)$post_id,
             'post_content' => $rc_metas['content'],
         );
+        // update post date
+        if(isset($rc_metas['accept_update']) && "1" == $rc_metas['accept_update']) {
+            $updates['post_date'] = $rc_metas['date'];
+            $updates['post_date_gmt'] = get_gmt_from_date($rc_metas['date']);
+        }
         // feature_image
         if(isset($rc_metas['accept_feature_img']) && "1" == $rc_metas['accept_feature_img'] &&
            isset($rc_metas['feature_img']) && $rc_metas['feature_img'] != '') {
             update_rc_post_thumbnail($post_id, $rc_metas['feature_img']);
         }
-       $upp = wp_update_post($updates,true);
+        remove_filter('content_save_pre', 'wp_filter_post_kses');
+        add_filter('content_save_pre', 'rc_content_allow_iframe');
+        $upp = wp_update_post($updates,true);
+        remove_filter('content_save_pre', 'rc_content_allow_iframe');
+        add_filter('content_save_pre', 'wp_filter_post_kses');
     }
     $dels = get_rc_metas();
     foreach ($dels as $key => $del)
@@ -287,6 +338,21 @@ function update_rc_reserved_content($post_id)
         delete_post_meta($post_id, $del);
     }
     wp_clear_scheduled_hook(RC_CRON_HOOK, array($post_id));
+}
+
+function rc_content_allow_iframe($content)
+{
+    global $allowedposttags;
+    // iframe and attribute in iframe
+    $allowedposttags['iframe'] = array(
+        'class' => array(), 'src' => array(),
+        'width' => array(), 'height' => array(),
+        'frameborder' => array(), 'scrolling' => array(),
+        'marginheight' => array(), 'marginwidth' => array(),
+        'srcdoc' => array(), 'sandbox' => array(),
+        'seamless' => array(), 'name' => array(),
+    );
+    return $content;
 }
 
 function update_rc_post_thumbnail($post_id, $reserved_post_thumb_path)
