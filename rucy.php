@@ -3,7 +3,7 @@
  * Plugin Name: Rucy
  * Plugin URI: https://github.com/gips/rucy
  * Description: Reservation Update (Published) Content.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: Nita
  * License: GPLv2 or later
  * Text Domain: rucy
@@ -22,9 +22,9 @@ function load_rc_jscss()
     global $hook_suffix;
     if(in_array($hook_suffix, array('post.php','post-new.php',)))
     {
-        wp_register_style('rucy.css', RC_PLUGIN_URL . '/css/rucy.css',array(),'0.0.1');
+        wp_register_style('rucy.css', RC_PLUGIN_URL . '/css/rucy.css',array(),'0.1.0');
         wp_enqueue_style('rucy.css');
-        wp_register_script('rucy.js', RC_PLUGIN_URL . '/js/rucy.js', array('jquery'), '0.0.1');
+        wp_register_script('rucy.js', RC_PLUGIN_URL . '/js/rucy.js', array('jquery'), '0.1.0');
         wp_enqueue_script('rucy.js');
     }
 }
@@ -229,7 +229,6 @@ function add_rucy_metabox_inside()
     <input type="checkbox" name="<?php echo $reserv_accept_feature_name; ?>" value="1" <?php echo ($reserv_accept_feature == "1") ? "checked" : ""; ?>> <?php _e('Accept reserve update feature image.', RC_TXT_DOMAIN); ?>
 </label>
 <div class="rc_feature_image_uploader">
-<!--<p><a href="media-upload.php?type=image&TB_iframe=1&width=753&height=522&post_id=<?php echo $post->ID ?>" class="thickbox<?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>" id="rc_feature_image_upload" title="<?php _e('Set featured image Reservation', RC_TXT_DOMAIN) ?>"><?php echo ($reserv_feature_image != '') ? $reserv_feature_image : __('Set featured image for Reservation', RC_TXT_DOMAIN); ?></a></p>-->
 <p><button id="rc_feature_image_upload" class="button rc-feature-uploader-button <?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>"><?php  _e('Set featured image for Reservation', RC_TXT_DOMAIN); ?></button></p>
 
 <div class="rc-feature-image-uploader__ctrl">
@@ -341,10 +340,12 @@ function update_rc_reserved_content($post_id)
             update_rc_post_thumbnail($post_id, $rc_metas['feature_img']);
         }
         remove_filter('content_save_pre', 'wp_filter_post_kses');
+        remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
         add_filter('content_save_pre', 'rc_content_allow_iframe');
         $upp = wp_update_post($updates,true);
         remove_filter('content_save_pre', 'rc_content_allow_iframe');
         add_filter('content_save_pre', 'wp_filter_post_kses');
+        add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
     }
     $dels = get_rc_metas();
     foreach ($dels as $key => $del)

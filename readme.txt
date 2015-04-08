@@ -1,13 +1,13 @@
 === Rucy ===
 Contributors: gips-nita
 Tags: post, update content, update post, update page, schedule update, reserve update, reservation update, rucy, Rucy
-Requires at least: 3.5+
-Tested up to: 3.9
-Stable tag: 0.2.0
+Requires at least: 3.5
+Tested up to: 4.1.1
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Add reservation update published content.
+Enable you can reservation post update it is published.
 
 == Description ==
 
@@ -36,6 +36,11 @@ You can install this plugin directly from your WordPress dashboard:
 
 
 == Changelog ==
+
+= 0.3.0 =
+* 2015-04-09
+* add "feature image" and "post date" to reservation update.
+* when reservation post update, fixed iframe tag and more html tag it will be removed.
 
 = 0.2.0 =
 * 2014-06-13
