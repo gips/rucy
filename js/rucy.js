@@ -55,5 +55,60 @@ jQuery(document).ready(function(){
         jQuery('.rc-datetime-edit').show();
         return false;
     });
+    // reservation feature image uploader
+    if(jQuery('#rc_feature_image_upload').hasClass('has_image')){
+        jQuery('.rc_remove_feature_image').show();
+    } else {
+        jQuery('.rc_remove_feature_image').hide();
+    }
+    var rc_feature_uploader;
+    jQuery('#rc_feature_image_upload').on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = jQuery(this).parents('.rc_feature_image_uploader');
+        if( rc_feature_uploader ){
+            rc_feature_uploader.open();
+            return;
+        }
+        /** @var object wp recieved form wordpress */
+        custom_uploader = wp.media({
+            title: "Set featured image for Reservation update",
+            button: {
+                text: "Choose Image"
+            },
+            multiple: false
+        });
+        custom_uploader.on( "select", function() {
+            var image = custom_uploader.state().get( "selection" );
+            var preview = jQuery( ".rc-feature-image-preview", parent );
+            image.each(function( file ) {
+                jQuery( "#rc_feature_image", parent ).val( file.toJSON().url );
+                var img = jQuery( "img", preview );
+                if ( img.length === 0 ) {
+                    preview.append( '<img src="' + file.toJSON().url + '" />' );
+                } else {
+                    img.attr( "src", file.toJSON().url );
+                }
+                preview.css( "display", "block" );
+            });
+        });
+        custom_uploader.open();
+    });
+    // 削除
+    jQuery( ".rc_remove_feature_image" ).on( 'click', function( e ) {
+        
+        e.preventDefault();
+        e.stopPropagation();
+
+        var parent = jQuery(this).parents( ".rc_feature_image_uploader" );
+        jQuery( "#rc_feature_image", parent ).val('');
+        var preview = jQuery( ".rc-feature-image-preview", parent );
+
+        if (  jQuery( "img", preview ).length > 0 ) {
+            jQuery( "img", preview ).remove();
+        }
+        
+    });
+
 });
 

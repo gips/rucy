@@ -3,7 +3,7 @@
  * Plugin Name: Rucy
  * Plugin URI: https://github.com/gips/rucy
  * Description: Reservation Update (Published) Content.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: Nita
  * License: GPLv2 or later
  * Text Domain: rucy
@@ -22,13 +22,19 @@ function load_rc_jscss()
     global $hook_suffix;
     if(in_array($hook_suffix, array('post.php','post-new.php',)))
     {
-        wp_register_style('rucy.css', RC_PLUGIN_URL . '/css/rucy.css',array(),'0.0.1');
+        wp_register_style('rucy.css', RC_PLUGIN_URL . '/css/rucy.css',array(),'0.1.0');
         wp_enqueue_style('rucy.css');
-        wp_register_script('rucy.js', RC_PLUGIN_URL . '/js/rucy.js', array('jquery'), '0.0.1');
+        wp_register_script('rucy.js', RC_PLUGIN_URL . '/js/rucy.js', array('jquery'), '0.1.0');
         wp_enqueue_script('rucy.js');
     }
 }
 
+// load js and css for pointer
+add_action('admin_menu', 'load_rc_pointer_menu');
+function load_rc_pointer_menu() {
+    wp_enqueue_script('wp-pointer');
+    wp_enqueue_style('wp-pointer');
+}
 /**
  * get rucy post_metas or post_meta keys.
  * @param int $post_id
@@ -40,7 +46,10 @@ function get_rc_metas($post_id = "")
         'accept' => 'rc_reserv_accept',
         'content' => 'rc_reserv_content',
         'date' => 'rc_reserv_date',
-    );
+        'feature_img' => 'rc_reserv_feature_image',
+        'accept_feature_img' => 'rc_reserv_accept_feature_image',
+        'accept_update' => 'rc_reserv_accept_post_update',
+            );
     if($post_id > 0)
     {
         foreach ($base as $key => $value)
@@ -158,9 +167,73 @@ function add_rucy_metabox_inside()
             echo '<input type="hidden" name="'.$k.'_cr" id="'.$k.'_cr" value="'.$v.'">';
         }
     ?>
+    <div id="rc-accept-update-update">
+        <label for="rc-accept-update-postdate">
+            <input id="rc-accept-update-postdate" type="checkbox" name="<?php echo $rc_keys['accept_update']; ?>" value="1" <?php echo ($rc_metas['accept_update'] == '1') ? "checked" : ""; ?> /> <?php _e('Accept reserve update post date.', RC_TXT_DOMAIN); ?>
+        </label>
+    </div>
+    <?php 
+    $dismissed = explode(',', get_user_meta(get_current_user_id(), 'dismissed_wp_pointers', true));
+    if(array_search('rc_update_postdate', $dismissed) === false):
+        $pointer_content = '<h3>' . __('Attention - reservation update UpdateTime', RC_TXT_DOMAIN) . '</h3>';
+        $pointer_content .= '<p>'.__("If update UpdateTime, this post\'s permalink is changed by permalink settings.", RC_TXT_DOMAIN).'</p>';
+    ?>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            // show notice pointer update postdate.
+            jQuery('#rc-accept-update-update').pointer({
+                content : '<?php echo $pointer_content ?>',
+                buttons : function(e, t){
+                    return jQuery('<a class="close" href="#"><?php _e('Do not show future', RC_TXT_DOMAIN) ?></a>').bind('click.pointer',function(e){
+                        e.preventDefault();
+                        t.element.pointer('close');
+                    });
+                },
+                position : { edge : "top", align : "left"},
+                close : function(){
+                    jQuery.post("<?php echo admin_url('admin-ajax.php'); ?>", {
+                        action : 'dismiss-wp-pointer',
+                        pointer : 'rc_update_postdate'
+                    });
+                }
+            }).pointer('open');
+        });
+    </script>
+    <?php 
+    endif;
+    ?>
 </div>
 <?php 
     wp_editor($reserv_content, $rc_content_name);
+/*
+ * support feature image reservation.
+ */
+    if( current_theme_supports('post-thumbnails') ) {
+?>
+<fieldset>
+<h3><?php echo __('Featured Image for Reservation Update', RC_TXT_DOMAIN); ?></h3>
+<label class="rc_feature_accept">
+    <input type="checkbox" name="<?php echo $reserv_accept_feature_name; ?>" value="1" <?php echo ($reserv_accept_feature == "1") ? "checked" : ""; ?>> <?php _e('Accept reserve update feature image.', RC_TXT_DOMAIN); ?>
+</label>
+<div class="rc_feature_image_uploader">
+<p><button id="rc_feature_image_upload" class="button rc-feature-uploader-button <?php echo ($reserv_feature_image != '') ? ' has_image' : ''; ?>"><?php  _e('Set featured image for Reservation', RC_TXT_DOMAIN); ?></button></p>
+
+<div class="rc-feature-image-uploader__ctrl">
+    <div class="rc-feature-image-preview">
+        <?php
+        if ( ! empty( $reserv_feature_image ) ) {
+           echo $reserv_feature_image;
+        }
+        ?> 
+    </div>
+</div>
+
+<p><button class="button rc_remove_feature_image"><?php _e('Remove Featured image for Reservation', RC_TXT_DOMAIN) ?></button></p>
+<input type="hidden" id="rc_feature_image" name="<?php echo $reserv_feature_name ?>" value="<?php echo $reserv_feature ?>" />
+</div>
+</fieldset>
+<?php 
+    }
 }
 
 // save post meta
@@ -244,6 +317,23 @@ function update_rc_reserved_content($post_id)
             'post_content' => apply_filters('the_content', $rc_metas['content']),
         );
        $upp = wp_update_post($updates,true);
+        // update post date
+        if(isset($rc_metas['accept_update']) && "1" == $rc_metas['accept_update']) {
+            $updates['post_date'] = $rc_metas['date'];
+            $updates['post_date_gmt'] = get_gmt_from_date($rc_metas['date']);
+        }
+        // feature_image
+        if(isset($rc_metas['accept_feature_img']) && "1" == $rc_metas['accept_feature_img'] &&
+           isset($rc_metas['feature_img']) && $rc_metas['feature_img'] != '') {
+            update_rc_post_thumbnail($post_id, $rc_metas['feature_img']);
+        }
+        remove_filter('content_save_pre', 'wp_filter_post_kses');
+        remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
+        add_filter('content_save_pre', 'rc_content_allow_iframe');
+        $upp = wp_update_post($updates,true);
+        remove_filter('content_save_pre', 'rc_content_allow_iframe');
+        add_filter('content_save_pre', 'wp_filter_post_kses');
+        add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
     }
     $dels = get_rc_metas();
     foreach ($dels as $key => $del)
@@ -251,6 +341,51 @@ function update_rc_reserved_content($post_id)
         delete_post_meta($post_id, $del);
     }
     wp_clear_scheduled_hook(RC_CRON_HOOK, array($post_id));
+}
+
+function rc_content_allow_iframe($content)
+{
+    global $allowedposttags;
+    // iframe and attribute in iframe
+    $allowedposttags['iframe'] = array(
+        'class' => array(), 'src' => array(),
+        'width' => array(), 'height' => array(),
+        'frameborder' => array(), 'scrolling' => array(),
+        'marginheight' => array(), 'marginwidth' => array(),
+        'srcdoc' => array(), 'sandbox' => array(),
+        'seamless' => array(), 'name' => array(),
+    );
+    return $content;
+}
+
+function update_rc_post_thumbnail($post_id, $reserved_post_thumb_path)
+{
+    include_once(ABSPATH . 'wp-admin/includes/image.php');
+    $upload_dir = wp_upload_dir();
+    $image_data = file_get_contents($reserved_post_thumb_path);
+    $file_name = basename($reserved_post_thumb_path);
+    if(wp_mkdir_p($upload_dir['path'])) {
+        $file = $upload_dir['path'] . '/' . $file_name;
+    } else {
+        $file = $upload_dir['basedir'] . '/' . $file_name;
+    }
+    file_put_contents($file, $image_data);
+    $wp_file_type = wp_check_filetype($file_name, null);
+    $attachment = array(
+        'post_mime_type' => $wp_file_type['type'],
+        'post_title' => sanitize_file_name($file_name),
+        'post_content' => '',
+        'post_status' => 'inherit',
+    );
+    delete_post_thumbnail($post_id);
+    $attachment_id = wp_insert_attachment($attachment, $file, $post_id);
+    $attach_data = wp_generate_attachment_metadata($attachment_id, $file);
+    if(!empty($attach_data) && !is_wp_error($attach_data)){
+        $res = wp_update_attachment_metadata($attachment_id, $attach_data);
+        set_post_thumbnail($post_id, $attachment_id);
+        
+        return $res;
+    }
 }
 
 // add update message
