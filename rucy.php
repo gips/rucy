@@ -22,6 +22,7 @@ class Rucy_Class {
     public function __construct() {
         register_activation_hook( plugin_basename(__FILE__), array( $this, 'activate_plugin' ) );
         add_action('admin_enqueue_scripts', array( $this, 'enqueue_style_script' ));
+        add_action( 'wp_admin', array( $this, 'enqueue_pointer_menu' ) );
     }
     
     public function activate_plugin() {
@@ -51,6 +52,14 @@ class Rucy_Class {
             wp_enqueue_style('rucy.css');
             wp_enqueue_script('rucy.js');
         }
+    }
+    
+    /**
+     * load enqueue script and style for pointer
+     */
+    public function enqueue_pointer_menu() {
+        wp_enqueue_script( 'wp-pointer' );
+        wp_enqueue_style( 'wp-pointer' );
     }
 }
 new Rucy_Class();
