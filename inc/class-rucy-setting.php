@@ -21,11 +21,12 @@ class Class_Rucy_Setting {
            && ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'update-options' ) )
           ) {
             // update post
-            if( count( array_diff($support_post_type, $_POST['rc_support_post_types']) ) ) {
+            $post_support_posts = ( isset($_POST['rc_support_post_types']) ) ? $_POST['rc_support_post_types'] : array();
+            if( count( array_diff( $support_post_type, $post_support_posts ) ) ) {
                 // different data before post
                 $is_different = true;
             }
-            $is_update = $component->update_support_post_type( $_POST['rc_support_post_types'] );
+            $is_update = $component->update_support_post_type( $post_support_posts );
             if ( $is_different && $is_update ) {
                 // 更新完了
             } else if ( $is_different && !$is_update ) {
