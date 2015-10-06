@@ -16,27 +16,28 @@ define( 'RC_TXT_DOMAIN', 'rucy' );
 define( 'RC_CRON_HOOK', 'rucy_update_reserved_content' );
 load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang' );
 
+require_once RC_PLUGIN_DIR . '/inc/class-rucy-component.php';
+require_once RC_PLUGIN_DIR . '/inc/class-rucy-setting.php';
+
 class Rucy_Class {
     public $support_post_type = array();
-
+    
     public function __construct() {
         register_activation_hook( plugin_basename(__FILE__), array( $this, 'activate_plugin' ) );
         add_action('admin_enqueue_scripts', array( $this, 'enqueue_style_script' ));
         add_action( 'wp_admin', array( $this, 'enqueue_pointer_menu' ) );
+        $setting = new Class_Rucy_Setting();
+        add_action( 'admin_menu', array( $setting, 'set_admin_menu' ) );
     }
     
     public function activate_plugin() {
-        $this->support_post_type = $this->get_support_post_type();
+        $this->init_support_post_type();
     }
     
-    public function get_support_post_type() {
-        $res = get_option( RC_SETTING_OPTION_KEY );
-        if( !$res ) {
-            $res = "post,page";
-            update_option(RC_SETTING_OPTION_KEY, $res);
-        }
-        $this->support_post_type = explode(",", $res);
-        return $res;
+    public function init_support_post_type() {
+        $component = new Class_Rucy_Component();
+        $this->support_post_type = $component->get_support_post_type();
+        $component->update_support_post_type( $this->support_post_type );
     }
     
     /**
