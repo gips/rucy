@@ -27,14 +27,17 @@ class Class_Rucy_Setting {
                 $is_different = true;
             }
             $is_update = $component->update_support_post_type( $post_support_posts );
-            if ( $is_different && $is_update ) {
-                // 更新完了
-            } else if ( $is_different && !$is_update ) {
+            if ( ( $is_different === false && $is_update === false ) || ( $is_different && $is_update ) ) {
+                // 更新完了 or 同じ値で更新した
+                set_transient( RC_SETTING_UPDATE, array( __( 'Success to setting update.', RC_TXT_DOMAIN ) ), 10 );
+            } else if ( $is_different && $is_update === false ) {
                 // 更新失敗
-            } else if ( !$is_different && !$is_update ) {
-                // 同じ値で更新した
+                $e = new WP_Error();
+                $e->add( 'error', __( 'Failed to setting update.', RC_TXT_DOMAIN ) );
+                set_transient( RC_SETTING_ERROR, $e->get_error_messages(), 10 );
             }
             $support_post_type = $component->get_support_post_type();
+            wp_safe_redirect( menu_page_url( 'rucy', false ) );
         }
 ?>
 <div class="wrap">
@@ -44,7 +47,7 @@ class Class_Rucy_Setting {
         <?php wp_nonce_field('update-options'); ?>
         <table class="form-table">
             <tr class="">
-                <th><?php _e( 'post type', RC_TXT_DOMAIN ); ?><br><small>*<?php _e( 'Require', RC_TXT_DOMAIN ); ?></small></th>
+                <th><?php _e( 'post type', RC_TXT_DOMAIN ); ?></th>
                 <td>
                     <ul>
                         <?php foreach ( $post_types as $key => $post_type ) { 
@@ -62,6 +65,24 @@ class Class_Rucy_Setting {
             <input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ) ?>" />
         </p>
     </form>
+</div>
+<?php 
+    }
+    
+    public function set_admin_notices() {
+        $message_class = "";
+        if ( $messages = get_transient( RC_SETTING_UPDATE ) ) {
+            $message_class = 'updated';
+        } else if ( $messages = get_transient( RC_SETTING_ERROR ) ) {
+            $message_class = 'error';
+        }
+?>
+<div class="<?php echo $message_class; ?>">
+    <ul>
+    <?php foreach ( $messages as $message ): ?>
+        <li><?php echo esc_html( $message );  ?></li>
+    <?php endforeach; ?>
+    </ul>
 </div>
 <?php 
     }

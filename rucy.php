@@ -14,6 +14,8 @@ define( 'RC_PLUGIN_DIR',  untrailingslashit( dirname( __FILE__ ) ) );
 define( 'RC_SETTING_OPTION_KEY', 'rucy_post_type' );
 define( 'RC_TXT_DOMAIN', 'rucy' );
 define( 'RC_CRON_HOOK', 'rucy_update_reserved_content' );
+define( 'RC_SETTING_UPDATE', 'rucy_setting_update' );
+define( 'RC_SETTING_ERROR', 'rucy_setting_error' );
 load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang' );
 
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-component.php';
@@ -28,6 +30,7 @@ class Rucy_Class {
         add_action( 'wp_admin', array( $this, 'enqueue_pointer_menu' ) );
         $setting = new Class_Rucy_Setting();
         add_action( 'admin_menu', array( $setting, 'set_admin_menu' ) );
+        add_action( 'admin_notices', array( $setting, 'set_admin_notices' ) );
     }
     
     public function activate_plugin() {
