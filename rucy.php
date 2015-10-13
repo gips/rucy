@@ -37,6 +37,15 @@ class Rucy_Class {
         add_action( 'admin_menu', array( $editor, 'add_rucy_metabox' ) );
         add_action( 'save_post', array( $editor, 'save_rc_post_meta' ) );
         add_filter( 'post_updated_messages', array( $editor, 'add_reservation_message' ) );
+        $component = new Class_Rucy_Component();
+        $accept_post_types = $component->get_support_post_type();
+        foreach ( $accept_post_types as $p ) {
+            if ( in_array( $p, array( 'page', 'post' ) ) ) {
+                $p .= 's';
+            }
+            add_filter('manage_'.$p.'_columns', array( $this, 'manage_rucy_cols' ) );
+            add_action('manage_'.$p.'_custom_column', array( $this, 'add_rucy_col' ), 10, 2); 
+        }
     }
     
     public function activate_plugin() {
@@ -75,6 +84,23 @@ class Rucy_Class {
     public function add_setting_link( $links ) {
         $links[] = '<a href="' . get_admin_url( null, 'options-general.php?page=rucy' ) . '">' . __('Settings') . '</a>';
         return $links;
+    }
+    
+    public function manage_rucy_cols( $columns ) {
+        $columns['rucy_reservation_date'] = __( "Reservation Update DateTime", RC_TXT_DOMAIN );
+        return $columns;
+    }
+    
+    public function add_rucy_col( $column_name, $post_id ) {
+        $component = new Class_Rucy_Component();
+        $post_metas = $component->get_post_rc_meta( $post_id );
+        if ( $column_name == 'rucy_reservation_date' ) {
+            if ( $post_metas->accept == "1" ) {
+                echo $post_metas->date;
+            } else {
+                _e( 'None' );
+            }
+        }
     }
 }
 new Rucy_Class();
