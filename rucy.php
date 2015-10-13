@@ -29,6 +29,7 @@ class Rucy_Class {
         register_activation_hook( plugin_basename(__FILE__), array( $this, 'activate_plugin' ) );
         add_action('admin_enqueue_scripts', array( $this, 'enqueue_style_script' ));
         add_action( 'admin_menu', array( $this, 'enqueue_pointer_menu' ) );
+        add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'add_setting_link' ) );
         $setting = new Class_Rucy_Setting();
         add_action( 'admin_menu', array( $setting, 'set_admin_menu' ) );
         add_action( 'admin_notices', array( $setting, 'set_admin_notices' ) );
@@ -69,6 +70,11 @@ class Rucy_Class {
     public function enqueue_pointer_menu() {
         wp_enqueue_script( 'wp-pointer' );
         wp_enqueue_style( 'wp-pointer' );
+    }
+    
+    public function add_setting_link( $links ) {
+        $links[] = '<a href="' . get_admin_url( null, 'options-general.php?page=rucy' ) . '">' . __('Settings') . '</a>';
+        return $links;
     }
 }
 new Rucy_Class();
