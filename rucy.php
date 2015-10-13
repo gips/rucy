@@ -35,6 +35,7 @@ class Rucy_Class {
         $editor = new Class_Rucy_Editer();
         add_action( 'admin_menu', array( $editor, 'add_rucy_metabox' ) );
         add_action( 'save_post', array( $editor, 'save_rc_post_meta' ) );
+        add_filter( 'post_updated_messages', array( $editor, 'add_reservation_message' ) );
     }
     
     public function activate_plugin() {

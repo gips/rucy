@@ -199,4 +199,37 @@ class Class_Rucy_Editer {
             wp_clear_scheduled_hook(RC_CRON_HOOK, array($post_id));
         }
     }
+    
+    // add update message
+    public function add_reservation_message( $messages ) {
+        global $post, $post_ID;
+        $component = new Class_Rucy_Component();
+        $accept_post_types = $component->get_support_post_type();
+        $post_type = get_post_type( $post );
+        
+        if ( !in_array( $post_type, $accept_post_types ) ) {
+            return $messages;
+        }
+        
+        $post_metas = $component->get_post_rc_meta( $post_ID );
+        if ( $post_metas->accept != "1" ) {
+            return $messages;
+        }
+        
+        $add_message_date = date_i18n( 'Y/m/d @ H:i', strtotime( $post_metas->date ) );
+        $base_str = __( 'registered reservation update content _RC_DATETIME_', RC_TXT_DOMAIN );
+        $add_message = '<br>' . strtr( $base_str, array( '_RC_DATETIME_' => $add_message_date ) );
+        // published
+        $messages[$post_type][1] .= $add_message;
+        $messages[$post_type][4] .= $add_message;
+        $messages[$post_type][6] .= $add_message;
+        // saved
+        $messages[$post_type][7] .= $add_message;
+        // submited
+        $messages[$post_type][8] .= $add_message;
+        // scheduled
+        $messages[$post_type][9] .= $add_message;
+        
+        return $messages;
+    }
 }
