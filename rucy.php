@@ -20,6 +20,7 @@ load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang' );
 
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-component.php';
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-setting.php';
+require_once RC_PLUGIN_DIR . '/inc/class-rucy-editor.php';
 
 class Rucy_Class {
     public $support_post_type = array();
@@ -27,10 +28,13 @@ class Rucy_Class {
     public function __construct() {
         register_activation_hook( plugin_basename(__FILE__), array( $this, 'activate_plugin' ) );
         add_action('admin_enqueue_scripts', array( $this, 'enqueue_style_script' ));
-        add_action( 'wp_admin', array( $this, 'enqueue_pointer_menu' ) );
+        add_action( 'admin_menu', array( $this, 'enqueue_pointer_menu' ) );
         $setting = new Class_Rucy_Setting();
         add_action( 'admin_menu', array( $setting, 'set_admin_menu' ) );
         add_action( 'admin_notices', array( $setting, 'set_admin_notices' ) );
+        $editor = new Class_Rucy_Editer();
+        add_action( 'admin_menu', array( $editor, 'add_rucy_metabox' ) );
+        add_action( 'save_post', array( $editor, 'save_rc_post_meta' ) );
     }
     
     public function activate_plugin() {
