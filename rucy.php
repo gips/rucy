@@ -46,6 +46,10 @@ class Rucy_Class {
             add_filter('manage_'.$p.'_columns', array( $this, 'manage_rucy_cols' ) );
             add_action('manage_'.$p.'_custom_column', array( $this, 'add_rucy_col' ), 10, 2); 
         }
+        // deactivation this plugin
+        register_deactivation_hook( __FILE__ , array( $this, 'uninstall_rucy' ) );
+        // uninstall this plugin
+        register_uninstall_hook( __FILE__, array( $this, 'uninstall_rucy' ) );
     }
     
     public function activate_plugin() {
@@ -99,6 +103,18 @@ class Rucy_Class {
                 echo $post_metas->date;
             } else {
                 _e( 'None' );
+            }
+        }
+    }
+    
+    public function uninstall_rucy() {
+        wp_clear_scheduled_hook( RC_CRON_HOOK );
+        delete_option( RC_SETTING_OPTION_KEY );
+        $all_posts = get_posts( 'numberposts=-1&post_status=' );
+        $meta_keys = array( 'accept', 'content', 'date', 'feature_img', 'accept_feature_img', 'accept_update' );
+        foreach ( $all_posts as $post_info ) {
+            foreach ( $meta_keys as $key ) {
+                delete_post_meta( $post_info->ID, $key );
             }
         }
     }
