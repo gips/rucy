@@ -27,8 +27,11 @@ class Class_Rucy_Setting {
                 $is_different = true;
             }
             $is_update = $component->update_support_post_type( $post_support_posts );
-            if ( ( $is_different === false && $is_update === false ) || ( $is_different && $is_update ) ) {
-                // 更新完了 or 同じ値で更新した
+            if ( $is_different && $is_update ) {
+                // 更新完了
+                set_transient( RC_SETTING_UPDATE, array( __( 'Success to setting update.', RC_TXT_DOMAIN ) ), 10 );
+            } else if ( $is_different === false && $is_update === false ) {
+                // 同じ値で更新した
                 set_transient( RC_SETTING_UPDATE, array( __( 'Success to setting update.', RC_TXT_DOMAIN ) ), 10 );
             } else if ( $is_different && $is_update === false ) {
                 // 更新失敗
