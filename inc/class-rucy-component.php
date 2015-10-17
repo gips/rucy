@@ -15,8 +15,10 @@ class Class_Rucy_Component {
     }
     public function get_support_post_type() {
         $res = get_option( RC_SETTING_OPTION_KEY );
-        if( !is_array( $res ) ) {
+        if( !$res ) {
             $res = array( 'post', 'page' );
+        } else if ( !is_array( $res ) ) {
+            $res = explode( ',' , $res );
         }
         return $res;
     }

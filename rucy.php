@@ -16,6 +16,7 @@ define( 'RC_TXT_DOMAIN', 'rucy' );
 define( 'RC_CRON_HOOK', 'rucy_update_reserved_content' );
 define( 'RC_SETTING_UPDATE', 'rucy_setting_update' );
 define( 'RC_SETTING_ERROR', 'rucy_setting_error' );
+define( 'RC_VERSION', '0.4.0' );
 load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang' );
 
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-component.php';
@@ -28,6 +29,7 @@ class Rucy_Class {
     
     public function __construct() {
         register_activation_hook( plugin_basename(__FILE__), array( $this, 'activate_plugin' ) );
+        add_action( 'admin_init', array( $this, 'rucy_upgrade' ) );
         add_action('admin_enqueue_scripts', array( $this, 'enqueue_style_script' ));
         add_action( 'admin_menu', array( $this, 'enqueue_pointer_menu' ) );
         add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'add_setting_link' ) );
@@ -114,6 +116,7 @@ class Rucy_Class {
     public function uninstall_rucy() {
         wp_clear_scheduled_hook( RC_CRON_HOOK );
         delete_option( RC_SETTING_OPTION_KEY );
+        delete_option( RC_VERSION );
         $all_posts = get_posts( 'numberposts=-1&post_status=' );
         $component = new Class_Rucy_Component();
         $post_meta_keys = $component->get_post_meta_keys();
@@ -121,6 +124,28 @@ class Rucy_Class {
             foreach ( $post_meta_keys as $key => $value ) {
                 delete_post_meta( $post_info->ID, $value );
             }
+        }
+    }
+    
+    public function rucy_upgrade() {
+        $rc_version = get_option( 'rucy_version' );
+        $rc_support_types = get_option( RC_SETTING_OPTION_KEY );
+        $is_old = false;
+        if ( $rc_version ) {
+            // compare
+            $new_version = RC_VERSION;
+            if ( $rc_version != $new_version ) {
+                $is_old = true;
+            }
+        } else {
+            // old version lessthan 0.3.0
+            $is_old = true;
+            if ( !is_array( $rc_support_types ) ) {
+                update_option( RC_SETTING_OPTION_KEY, explode( ',', $rc_support_types ) );
+            }
+        }
+        if ( $is_old ) {
+            update_option( 'rucy_version' , RC_VERSION );
         }
     }
 }
