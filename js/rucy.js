@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
             jQuery('.rc-datetime-wrap').addClass('form-invalid');
             return false;
         }
-        jQuery('.rc-datetime > b').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
+        jQuery('.rc-datetime > strong').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
         jQuery('#rc_year_cr').val(year);
         jQuery('#rc_month_cr').val(month);
         jQuery('#rc_day_cr').val(day);
