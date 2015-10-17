@@ -21,6 +21,7 @@ load_plugin_textdomain( RC_TXT_DOMAIN, false, 'rucy/lang' );
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-component.php';
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-setting.php';
 require_once RC_PLUGIN_DIR . '/inc/class-rucy-editor.php';
+require_once RC_PLUGIN_DIR . '/inc/class-rucy-cron.php';
 
 class Rucy_Class {
     public $support_post_type = array();
@@ -46,6 +47,9 @@ class Rucy_Class {
             add_filter('manage_'.$p.'_columns', array( $this, 'manage_rucy_cols' ) );
             add_action('manage_'.$p.'_custom_column', array( $this, 'add_rucy_col' ), 10, 2); 
         }
+        // update content to reserved content
+        $cron = new Class_Rucy_Cron();
+        add_action( RC_CRON_HOOK, array( $cron, 'update_rc_reserved_content' ) );
         // deactivation this plugin
         register_deactivation_hook( __FILE__ , array( $this, 'uninstall_rucy' ) );
         // uninstall this plugin
