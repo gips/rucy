@@ -75,7 +75,7 @@ class Rucy_Class {
         global $hook_suffix;
         if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php' ) ) ) {
             wp_register_style('rucy.css', RC_PLUGIN_URL . 'css/rucy.css',array(),'0.1.0');
-            wp_register_script('rucy.js', RC_PLUGIN_URL . 'js/rucy.js', array('jquery'), '0.1.0');
+            wp_register_script('rucy.js', RC_PLUGIN_URL . 'js/rucy.js', array('jquery'), '0.1.1');
             wp_enqueue_style('rucy.css');
             wp_enqueue_script('rucy.js');
         }
@@ -115,10 +115,11 @@ class Rucy_Class {
         wp_clear_scheduled_hook( RC_CRON_HOOK );
         delete_option( RC_SETTING_OPTION_KEY );
         $all_posts = get_posts( 'numberposts=-1&post_status=' );
-        $meta_keys = array( 'accept', 'content', 'date', 'feature_img', 'accept_feature_img', 'accept_update' );
+        $component = new Class_Rucy_Component();
+        $post_meta_keys = $component->get_post_meta_keys();
         foreach ( $all_posts as $post_info ) {
-            foreach ( $meta_keys as $key ) {
-                delete_post_meta( $post_info->ID, $key );
+            foreach ( $post_meta_keys as $key => $value ) {
+                delete_post_meta( $post_info->ID, $value );
             }
         }
     }

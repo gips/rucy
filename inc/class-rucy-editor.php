@@ -184,9 +184,8 @@ class Class_Rucy_Editer {
                 $_POST[$post_meta_keys->accept]  = "0";
         }
         // save post meta 
-        $meta_keys = array( 'accept', 'content', 'date', 'feature_img', 'accept_feature_img', 'accept_update' );
-        foreach ( $meta_keys as $mk ) {
-            $component->save_rc_post_meta_base( $post_id, $post_meta_keys->$mk, $_POST );
+        foreach ( $post_meta_keys as $key => $value ) {
+            $component->save_rc_post_meta_base( $post_id, $value, $_POST );
         }
         // regist reserve update content
         if ( $_POST[$post_meta_keys->accept] == "1" ) {
