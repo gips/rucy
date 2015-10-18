@@ -14,12 +14,16 @@ class Class_Rucy_Cron {
         if ( $post_metas->accept != "1" ) {
             return;
         }
+        // rollback
+        $rollback_data = array();
+        if( $post_metas->accept_rollback == "1" ) {
+            $rollback_data = $this->get_rollback_post( (int)$post_id, $post_metas->accept_rollback_date, $post_metas->accept_rollback_feature_img );
+        }
         // set update content
         $updates = array( 
             'ID' => (int)$post_id,    
             'post_content' => apply_filters( 'the_content', $post_metas->content ),
         );
-        wp_update_post( $updates, true );
         // set update post date
         if ( $post_metas->accept_update == "1" ) {
             $updates['post_date'] = $post_metas->date;
@@ -44,6 +48,11 @@ class Class_Rucy_Cron {
         }
         // clear schedule on wp_cron
         wp_clear_scheduled_hook( RC_CRON_HOOK, array( $post_id ) );
+        // save post meta for rollback
+        if ( $post_metas->accept_rollback == "1" ) {
+            $reserve_date = strtotime( get_gmt_from_date( $post_metas->rollback_date ) . "GMT" );
+            $this->set_rollback_setting( $post_id, $reserve_date, $rollback_data );
+        }
     }
     
     public function rc_content_allow_iframe( $content ) {
@@ -88,5 +97,35 @@ class Class_Rucy_Cron {
 
             return $res;
         }
+    }
+    
+    private function get_rollback_post( $post_id, $accept_rollback_date = "0", $accept_rollback_feature_image = "0" ) {
+        $post_data = get_post( $post_id );
+        $component = new Class_Rucy_Component();
+        $post_meta_keys = $component->get_post_meta_keys();
+        
+        $res = array(
+            $post_meta_keys->content => $post_data->post_content,
+            $post_meta_keys->accept => "1",
+        );
+        if ( $accept_rollback_date == "1" ) {
+            $res[$post_meta_keys->accept_update] = "1";
+            $res[$post_meta_keys->date] = $post_data->post_date;
+        }
+        if ( $accept_rollback_feature_image == "1" ) {
+            $res[$post_meta_keys->accept_feature_img] = "1";
+            $feature_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'full' );
+            $res[$post_meta_keys->feature_img] = $feature_image[0];
+        }
+        
+        return $res;
+    }
+    
+    private function set_rollback_setting( $post_id, $reserve_date, array $rollback_data ) {
+        $component = new Class_Rucy_Component();
+        foreach ( $rollback_data as $key => $value ) {
+            $component->save_rc_post_meta_base( (int)$post_id, $key, $rollback_data );
+        }
+         wp_schedule_single_event( $reserve_date, RC_CRON_HOOK, array( $post_id ) );
     }
 }

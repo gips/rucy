@@ -30,7 +30,6 @@ class Class_Rucy_Editer {
         $this->post_metas = $component->get_post_rc_meta( $post->ID );
         $this->current_post_content = $post->post_content;
         $dismissed = explode( ',', get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
-        
         $reserve_date = ( $this->post_metas->date == "" ) ? date_i18n( 'Y-m-d H:i:s' ) : $this->post_metas->date;
         $arr_reserve_date = getdate(strtotime( $reserve_date ) );
         $arr_date = array(
@@ -41,6 +40,16 @@ class Class_Rucy_Editer {
             'rc_minutes' => date_i18n( 'i', $arr_reserve_date[0] ),
                 );
         $reserve_content = ( $this->post_metas->content == "" ) ? $this->current_post_content : $this->post_metas->content;
+        // rollback settings
+        $rollback_date = ( $this->post_metas->rollback_date == "" ) ? date_i18n( 'Y-m-d H:i:s' ) : $this->post_metas->rollback_date;
+        $arr_rollback_date = getdate(strtotime( $rollback_date ) );
+        $arr_rb_date = array(
+            'rc_rb_year' => date_i18n( 'Y', $arr_rollback_date[0] ),
+            'rc_rb_month' => date_i18n( 'm', $arr_rollback_date[0] ),
+            'rc_rb_day' => date_i18n( 'd', $arr_rollback_date[0] ),
+            'rc_rb_hour' => date_i18n( 'H', $arr_rollback_date[0] ),
+            'rc_rb_minutes' => date_i18n( 'i', $arr_rollback_date[0] ),
+        );
 ?>
 <div id="rc-post-wrap" class="curtime">
     <input type="hidden" id="schroeder" name="schroeder" value="<?php echo wp_create_nonce(plugin_basename(__FILE__)); ?>" />
@@ -153,6 +162,73 @@ class Class_Rucy_Editer {
 <input type="hidden" id="rc_feature_image" name="<?php echo $this->post_meta_keys->feature_img; ?>" value="<?php echo $this->post_metas->feature_img; ?>" />
 </div>
 </fieldset>
+<fieldset id="rc-rollback-container" class="curtime">
+    <h3><?php _e( 'Setting Rollback post content.', RC_TXT_DOMAIN ); ?></h3>
+    <label for="rc-accept-rollback-content">
+        <input type="checkbox" name="<?php echo $this->post_meta_keys->accept_rollback ?>" value="1" id="rc-accept-rollback-content" class="rc-accept-rollback-content" <?php echo ( $this->post_metas->accept_rollback == "1" ) ? "checked" : ""; ?> > <?php _e( 'Accept rollback content.', RC_TXT_DOMAIN ); ?>
+    </label>
+    <div class="rc-rollback-datetime" id="timestamp">
+        <?php _e( 'Rollback DateTime', RC_TXT_DOMAIN ); ?> : <strong><?php echo date_i18n("Y/m/d @ H:i", strtotime( $rollback_date ) ); ?></strong>
+    </div>
+    <a href="#edit-rollback-datetime" class="edit-timestamp rc-rollback-datetime-edit"><?php _e('Edit'); ?></a>
+    <div class="rc-rollback-datetime-wrap">
+        <select name="rc_rb_year" id="">
+    <?php  for( $y = $current_year; $y <= ( $current_year + 3); $y++ ): 
+        $selected_y = ( $y == date_i18n( 'Y', $arr_rollback_date[0] ) ) ? "selected" : ""; ?>
+        <option value="<?php echo $y; ?>" <?php echo $selected_y; ?>><?php echo $y; ?></option>
+    <?php endfor; ?>
+    </select> / 
+    <select name="rc_rb_month" id="">
+    <?php for( $i = 1; $i <= 12; $i++ ):
+        $m = sprintf( "%02d", $i );
+        $selected_m = ( $m == date_i18n( 'm', $arr_rollback_date[0] ) ) ? "selected" : "";
+    ?>
+        <option value="<?php echo $m; ?>" <?php echo $selected_m; ?>><?php echo $m; ?></option>
+    <?php endfor; ?>
+    </select> / 
+    <select name="rc_rb_day" id="">
+    <?php  for( $d = 1; $d<=31; $d++ ):
+        $d = sprintf( "%02d", $d );
+        $selected_d = ( $d == date_i18n( 'd', $arr_rollback_date[0] ) ) ? "selected" : "";
+    ?>
+        <option value="<?php echo $d; ?>" <?php echo $selected_d; ?>><?php echo $d; ?></option>
+    <?php endfor; ?>
+    </select>@
+    <select name="rc_rb_hour" id="">
+    <?php for( $h = 0; $h <= 23; $h++ ): 
+        $h = sprintf("%02d",$h);
+        $selected_h = ( $h == date_i18n( 'H', $arr_rollback_date[0] ) ) ? "selected" : "";
+    ?>
+        <option value="<?php echo $h; ?>" <?php echo $selected_h; ?>><?php echo $h; ?></option>
+    <?php endfor; ?>
+    </select>:
+    <select name="rc_rb_minutes" id="">
+    <?php for( $min = 0; $min <= 59; $min++ ): 
+        $min = sprintf( "%02d", $min );
+        $selected_min = ( $min == date_i18n( 'i', $arr_rollback_date[0] ) ) ? "selected" : "";
+        ?>
+        <option value="<?php echo $min; ?>" <?php echo $selected_min; ?>><?php echo $min; ?></option>
+    <?php endfor; ?>
+    </select>
+    <a href="#edit-rollback-datetime" class="rc-rollback-datetime-update button"><?php _e('OK',RC_TXT_DOMAIN) ?></a>
+    <a href="#edit-rollback-datetime" class="rc-rollback-datetime-cancel"><?php _e('Cancel',RC_TXT_DOMAIN) ?></a>
+    </div>
+    <?php foreach ( $arr_rb_date as $k => $v ):  ?>
+    <input type="hidden" name="<?php echo $k; ?>_cr" id="<?php echo $k; ?>_cr" value="<?php echo $v; ?>"/>
+    <?php endforeach; ?>
+    <div id="rc-accept-rollback-updatetime-wrap">
+        <label for="rc-accept-rollback-updatetime">
+            <input id="rc-accept-rollback-updatetime" type="checkbox" value="1" name="<?php echo $this->post_meta_keys->accept_rollback_update; ?>" <?php echo ( $this->post_metas->accept_rollback_update == "1" ) ? "checked" : ""; ?>> <?php _e( 'Accept Rollback post date.', RC_TXT_DOMAIN ); ?>
+        </label>
+    </div>
+    <?php if( current_theme_supports( 'post-thumbnails' ) ):  ?>
+    <div id="rc-accept-rollback-feature-image-wrap">
+        <label for="rc-accept-rollback-feature-image">
+            <input id="rc-accept-rollback-feature-image" type="checkbox" value="1" name="<?php echo $this->post_meta_keys->accept_rollback_feature_img; ?>" <?php echo ( $this->post_metas->accept_rollback_feature_img == "1" ) ? "checked" : ""; ?>> <?php _e( 'Accept Rollback feature image.', RC_TXT_DOMAIN ); ?>
+        </label>
+    </div>
+    <?php endif; ?>
+</fieldset>
 <?php 
  endif;
     }
@@ -182,6 +258,22 @@ class Class_Rucy_Editer {
         }
         if( !isset( $_POST[$post_meta_keys->accept] ) || $_POST[$post_meta_keys->accept] != "1" ){
                 $_POST[$post_meta_keys->accept]  = "0";
+        }
+        // rollback setting
+        $rdate = mktime( $_POST['rc_rb_hour'], $_POST['rc_rb_minutes'], 00, $_POST['rc_rb_month'], $_POST['rc_rb_day'], $_POST['rc_rb_year'] );
+        if ( $rdate ) {
+            $_POST[$post_meta_keys->rollback_date] = date_i18n( 'Y-m-d H:i:s', $rdate );
+        } else {
+            $_POST[$post_meta_keys->rollback_date] = "";
+        }
+        if( !isset( $_POST[$post_meta_keys->accept_rollback] ) || $_POST[$post_meta_keys->accept_rollback] != "1" ){
+            $_POST[$post_meta_keys->accept_rollback] = "0";
+        }
+        if( !isset( $_POST[$post_meta_keys->accept_rollback_update] ) || $_POST[$post_meta_keys->accept_rollback_update] != "1" ){
+            $_POST[$post_meta_keys->accept_rollback_update] = "0";
+        }
+        if( !isset( $_POST[$post_meta_keys->accept_rollback_feature_img] ) || $_POST[$post_meta_keys->accept_rollback_feature_img] != "1" ){
+            $_POST[$post_meta_keys->accept_rollback_feature_img] = "0";
         }
         // save post meta 
         foreach ( $post_meta_keys as $key => $value ) {
@@ -218,6 +310,12 @@ class Class_Rucy_Editer {
         $add_message_date = date_i18n( 'Y/m/d @ H:i', strtotime( $post_metas->date ) );
         $base_str = __( 'registered reservation update content _RC_DATETIME_', RC_TXT_DOMAIN );
         $add_message = '<br>' . strtr( $base_str, array( '_RC_DATETIME_' => $add_message_date ) );
+        
+        if( $post_metas->accept_rollback == "1" ) {
+            $rollback_date = date_i18n( 'Y/m/d @ H:i', strtotime( $post_metas->rollback_date ) );
+            $rollback_base_str = __( 'registered rollback content _RC_ROLLBACK_DATETIME_ ', RC_TXT_DOMAIN );
+            $add_message .= '<br>' . strtr( $rollback_base_str , array( '_RC_ROLLBACK_DATETIME_' => $rollback_date ) );
+         }
         // published
         $messages[$post_type][1] .= $add_message;
         $messages[$post_type][4] .= $add_message;

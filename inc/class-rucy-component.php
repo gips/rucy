@@ -37,6 +37,10 @@ class Class_Rucy_Component {
         $post_meta_keys->feature_img = 'rc_reserv_feature_image';
         $post_meta_keys->accept_feature_img = 'rc_reserv_accept_feature_image';
         $post_meta_keys->accept_update = 'rc_reserv_accept_post_update';
+        $post_meta_keys->accept_rollback = 'rc_rollback_accept';
+        $post_meta_keys->rollback_date = 'rc_rollback_date';
+        $post_meta_keys->accept_rollback_update = 'rc_rollback_accept_update_date';
+        $post_meta_keys->accept_rollback_feature_img = 'rc_rollback_accept_feature_image';
         return $post_meta_keys;
     }
     
