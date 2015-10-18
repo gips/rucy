@@ -98,6 +98,7 @@ class Rucy_Class {
     
     public function manage_rucy_cols( $columns ) {
         $columns['rucy_reservation_date'] = __( "Reservation Update DateTime", RC_TXT_DOMAIN );
+        $columns['rucy_rollback_date'] = __( "Rollback DateTime", RC_TXT_DOMAIN );
         return $columns;
     }
     
@@ -107,6 +108,13 @@ class Rucy_Class {
         if ( $column_name == 'rucy_reservation_date' ) {
             if ( $post_metas->accept == "1" ) {
                 echo $post_metas->date;
+            } else {
+                _e( 'None' );
+            }
+        }
+        if ( $column_name == 'rucy_rollback_date' ) {
+            if ( $post_metas->accept_rollback == "1" ) {
+                echo $post_metas->rollback_date;
             } else {
                 _e( 'None' );
             }
