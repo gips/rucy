@@ -75,7 +75,7 @@ class Rucy_Class {
      */
     public function enqueue_style_script() {
         global $hook_suffix;
-        if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php' ) ) ) {
+        if ( in_array( $hook_suffix, array( 'post.php', 'post-new.php', 'settings_page_rucy' ) ) ) {
             wp_register_style('rucy.css', RC_PLUGIN_URL . 'css/rucy.css',array(),'0.1.0');
             wp_register_script('rucy.js', RC_PLUGIN_URL . 'js/rucy.js', array('jquery'), '0.1.1');
             wp_enqueue_style('rucy.css');

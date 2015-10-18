@@ -46,6 +46,9 @@ class Class_Rucy_Setting {
 <div class="wrap">
     <h2><?php _e( 'Rucy Settings', RC_TXT_DOMAIN ); ?></h2>
     <p><?php _e( 'Configure content types reservation update.', RC_TXT_DOMAIN ); ?></p>
+    <div class="rc-donation">
+        <p><?php _e( 'Your contribution will continue to better this plugin.', RC_TXT_DOMAIN ); ?> <a href="http://www.amazon.co.jp/registry/wishlist/27FDI6LJU0X1O" class="button"><?php _e( 'Donate', RC_TXT_DOMAIN ); ?></a></p>
+    </div>
     <form method="post" action="#">
         <?php wp_nonce_field('update-options'); ?>
         <table class="form-table">

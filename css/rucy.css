@@ -57,3 +57,13 @@
 .rc-rollback-datetime {
     display: inline-block;
 }
+
+.rc-donation {
+    float: left;
+    clear: both;
+    background-color: #faf096;
+    border: 1px solid #faa824;
+    border-radius: 3px;
+    padding: 0 12px;
+    color: #212121;
+}
