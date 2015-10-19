@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: rucy\n"
-"POT-Creation-Date: 2015-04-08 06:31+0900\n"
-"PO-Revision-Date: 2015-04-08 06:31+0900\n"
+"POT-Creation-Date: 2015-10-19 03:33+0900\n"
+"PO-Revision-Date: 2015-10-19 03:37+0900\n"
 "Last-Translator: nita <nita@gips.jp>\n"
 "Language-Team: \n"
-"Language: ja\n"
+"Language: ja_JP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,37 +13,37 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-KeywordsList: __;_e\n"
-"X-Poedit-SearchPath-0: ..\n"
+"X-Poedit-SearchPath-0: ../inc\n"
 
-#: ../rucy.php:112
+#: ../inc/class-rucy-editor.php:56
 msgid "Accept reserve update content."
 msgstr "予約更新を行う"
 
-#: ../rucy.php:115
+#: ../inc/class-rucy-editor.php:58
 msgid "UpdateTime"
 msgstr "更新日時"
 
-#: ../rucy.php:117
+#: ../inc/class-rucy-editor.php:60 ../inc/class-rucy-editor.php:173
 msgid "Edit"
 msgstr "編集"
 
-#: ../rucy.php:167
+#: ../inc/class-rucy-editor.php:100 ../inc/class-rucy-editor.php:213
 msgid "OK"
 msgstr "OK"
 
-#: ../rucy.php:168
+#: ../inc/class-rucy-editor.php:101 ../inc/class-rucy-editor.php:214
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: ../rucy.php:185
+#: ../inc/class-rucy-editor.php:108
 msgid "Accept reserve update post date."
 msgstr "更新日時を更新する"
 
-#: ../rucy.php:191
+#: ../inc/class-rucy-editor.php:112
 msgid "Attention - reservation update UpdateTime"
 msgstr "注意 - 更新日時の更新について"
 
-#: ../rucy.php:192
+#: ../inc/class-rucy-editor.php:113
 msgid ""
 "If update UpdateTime, this post\\'s permalink is changed by permalink "
 "settings."
@@ -51,95 +51,123 @@ msgstr ""
 "更新日時を更新すると、パーマリンク設定内容によってはパーマリンクが変更される"
 "場合があります。"
 
-#: ../rucy.php:200
+#: ../inc/class-rucy-editor.php:121
 msgid "Do not show future"
 msgstr "今後表示しない"
 
-#: ../rucy.php:227
+#: ../inc/class-rucy-editor.php:146
 msgid "Featured Image for Reservation Update"
 msgstr "予約更新用アイキャッチ画像"
 
-#: ../rucy.php:229
+#: ../inc/class-rucy-editor.php:148
 msgid "Accept reserve update feature image."
 msgstr "アイキャッチ画像の予約更新を行う"
 
-#: ../rucy.php:231
-msgid "Set featured image Reservation"
-msgstr "予約更新用アイキャッチ画像を設定"
-
-#: ../rucy.php:231
+#: ../inc/class-rucy-editor.php:151
 msgid "Set featured image for Reservation"
 msgstr "予約更新用アイキャッチ画像を登録する"
 
-#: ../rucy.php:232
+#: ../inc/class-rucy-editor.php:161
 msgid "Remove Featured image for Reservation"
 msgstr "予約更新用アイキャッチ画像を削除する"
 
-#: ../rucy.php:401
+#: ../inc/class-rucy-editor.php:166
+msgid "Setting Rollback post content."
+msgstr "ロールバック設定"
+
+#: ../inc/class-rucy-editor.php:168
+msgid "Accept rollback content."
+msgstr "記事のロールバックを行う"
+
+#: ../inc/class-rucy-editor.php:171
+msgid "Rollback DateTime"
+msgstr "ロールバック日時"
+
+#: ../inc/class-rucy-editor.php:221
+msgid "Accept Rollback post date."
+msgstr "更新日時のロールバックを行う"
+
+#: ../inc/class-rucy-editor.php:227
+msgid "Accept Rollback feature image."
+msgstr "アイキャッチ画像のロールバックを行う"
+
+#: ../inc/class-rucy-editor.php:311
 msgid "registered reservation update content _RC_DATETIME_"
 msgstr "_RC_DATETIME_ に更新するよう予約しました。"
 
-#: ../rucy.php:421
-msgid "Reservation Update DateTime"
-msgstr "予約更新日時"
+#: ../inc/class-rucy-editor.php:316
+msgid "registered rollback content _RC_ROLLBACK_DATETIME_ "
+msgstr "_RC_ROLLBACK_DATETIME_ にロールバックします。"
 
-#: ../rucy.php:436
-msgid "None"
-msgstr "なし"
+#: ../inc/class-rucy-setting.php:31 ../inc/class-rucy-setting.php:33
+msgid "Success to setting update."
+msgstr "設定の更新が完了しました。"
 
-#: ../rucy.php:484
-msgid "post or page is not allow."
-msgstr "カスタム投稿タイプにpostもしくはpageは入力できません。"
+#: ../inc/class-rucy-setting.php:37
+msgid "Failed to setting update."
+msgstr "設定の更新に失敗。"
 
-#: ../rucy.php:492
-msgid "Do not input \"post\" or \"page\". "
-msgstr "postもしくはpageは入力できません。"
-
-#: ../rucy.php:494
-msgid "Please input alphabet or numeric. And do not input sequencial commas."
-msgstr "英数のみ入力してください。また、連続でカンマの入力はできません。"
-
-#: ../rucy.php:496
-#, fuzzy
-msgid "Do not input \"attachment\" or \"revision\". "
-msgstr "postもしくはpageは入力できません。"
-
-#: ../rucy.php:523
+#: ../inc/class-rucy-setting.php:45
 msgid "Rucy Settings"
 msgstr "予約更新設定"
 
-#: ../rucy.php:524
+#: ../inc/class-rucy-setting.php:46
 msgid "Configure content types reservation update."
 msgstr "予約更新する投稿タイプを設定してください。"
 
-#: ../rucy.php:529
+#: ../inc/class-rucy-setting.php:48
+msgid "Your contribution will continue to better this plugin."
+msgstr "あなたの貢献があれば、このプラグインをもっと良くすることができます。"
+
+#: ../inc/class-rucy-setting.php:48
+msgid "Donate"
+msgstr "寄付する"
+
+#: ../inc/class-rucy-setting.php:54
 msgid "post type"
 msgstr "投稿タイプ"
 
-#: ../rucy.php:529
-msgid "Require"
-msgstr "必須"
-
-#: ../rucy.php:532
-msgid "post"
-msgstr "投稿"
-
-#: ../rucy.php:533
-msgid "page"
-msgstr "固定ページ"
-
-#: ../rucy.php:544
-msgid "custom post type"
-msgstr "カスタム投稿タイプ"
-
-#: ../rucy.php:546
-msgid "Separated by commas"
-msgstr "カンマ区切りで入力"
-
-#: ../rucy.php:559
+#: ../inc/class-rucy-setting.php:69
 msgid "Save Changes"
 msgstr "変更を保存"
 
-#: ../rucy.php:618
-msgid "Settings"
-msgstr "設定"
+#~ msgid "Set featured image Reservation"
+#~ msgstr "予約更新用アイキャッチ画像を設定"
+
+#~ msgid "Reservation Update DateTime"
+#~ msgstr "予約更新日時"
+
+#~ msgid "None"
+#~ msgstr "なし"
+
+#~ msgid "post or page is not allow."
+#~ msgstr "カスタム投稿タイプにpostもしくはpageは入力できません。"
+
+#~ msgid "Do not input \"post\" or \"page\". "
+#~ msgstr "postもしくはpageは入力できません。"
+
+#~ msgid ""
+#~ "Please input alphabet or numeric. And do not input sequencial commas."
+#~ msgstr "英数のみ入力してください。また、連続でカンマの入力はできません。"
+
+#, fuzzy
+#~ msgid "Do not input \"attachment\" or \"revision\". "
+#~ msgstr "postもしくはpageは入力できません。"
+
+#~ msgid "Require"
+#~ msgstr "必須"
+
+#~ msgid "post"
+#~ msgstr "投稿"
+
+#~ msgid "page"
+#~ msgstr "固定ページ"
+
+#~ msgid "custom post type"
+#~ msgstr "カスタム投稿タイプ"
+
+#~ msgid "Separated by commas"
+#~ msgstr "カンマ区切りで入力"
+
+#~ msgid "Settings"
+#~ msgstr "設定"

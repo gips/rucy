@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
             jQuery('.rc-datetime-wrap').addClass('form-invalid');
             return false;
         }
-        jQuery('.rc-datetime > b').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
+        jQuery('.rc-datetime > strong').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
         jQuery('#rc_year_cr').val(year);
         jQuery('#rc_month_cr').val(month);
         jQuery('#rc_day_cr').val(day);
@@ -45,7 +45,7 @@ jQuery(document).ready(function(){
         var day = jQuery('#rc_day_cr').val();
         var hour = jQuery('#rc_hour_cr').val();
         var min = jQuery('#rc_minutes_cr').val();
-        jQuery('.rc-datetime > b').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
+        jQuery('.rc-datetime > strong').html(year + "/" + month + "/" + day + " @ " + hour + ":" + min);
         jQuery('select[name="rc_year"]').val(year);
         jQuery('select[name="rc_month"]').val(month);
         jQuery('select[name="rc_day"]').val(day);
@@ -109,6 +109,60 @@ jQuery(document).ready(function(){
         }
         
     });
-
+    // rollback settings
+    jQuery('.rc-rollback-datetime-edit').on('click',function(){
+        jQuery(this).hide();
+        jQuery('.rc-rollback-datetime-wrap').slideDown('normal');
+        return false;
+    });
+    // edit rollback date
+    jQuery('.rc-rollback-datetime-update').on('click', function(){
+        var rb_year = jQuery('select[name="rc_rb_year"]').val();
+        var rb_month = jQuery('select[name="rc_rb_month"]').val();
+        var rb_day = jQuery('select[name="rc_rb_day"]').val();
+        var rb_hour = jQuery('select[name="rc_rb_hour"]').val();
+        var rb_min = jQuery('select[name="rc_rb_minutes"]').val();
+        var rbDate = new Date(rb_year, rb_month - 1, rb_day, rb_hour, rb_min);
+        var rb_now = new Date();
+        var rb_flg = false;
+        if(rbDate.getFullYear() != rb_year || (1 + rbDate.getMonth()) != rb_month || rbDate.getDate() != rb_day || rbDate.getMinutes() != rb_min){
+            rb_flg = false;
+        } else if (rbDate.getTime() < rb_now.getTime()) {
+            rb_flg = false;
+        } else {
+            rb_flg = true;
+        }
+        if(rb_flg === true){
+            jQuery('.rc-rollback-datetime-wrap').removeClass('form-invalid');
+        } else {
+            jQuery('.rc-rollback-datetime-wrap').addClass('form-invalid');
+            return false;
+        }
+        jQuery('.rc-rollback-datetime > strong').html(rb_year + "/" + rb_month + "/" + rb_day + " @ " + rb_hour + ":" + rb_min);
+        jQuery('#rc_rb_year_cr').val(rb_year);
+        jQuery('#rc_rb_month_cr').val(rb_month);
+        jQuery('#rc_rb_day_cr').val(rb_day);
+        jQuery('#rc_rb_hour_cr').val(rb_hour);
+        jQuery('#rc_rb_minutes_cr').val(rb_min);
+        jQuery('.rc-rollback-datetime-wrap').slideUp('normal');
+        jQuery('.rc-rollback-datetime-edit').show();
+    });
+    // cancel rollback date
+    jQuery('.rc-rollback-datetime-cancel').on('click',function(){
+        var rb_year = jQuery('#rc_rb_year_cr').val();
+        var rb_month = jQuery('#rc_rb_month_cr').val();
+        var rb_day = jQuery('#rc_rb_day_cr').val();
+        var rb_hour = jQuery('#rc_rb_hour_cr').val();
+        var rb_min = jQuery('#rc_rb_minutes_cr').val();
+        jQuery('.rc-rollback-datetime > strong').html(rb_year + "/" + rb_month + "/" + rb_day + " @ " + rb_hour + ":" + rb_min);
+        jQuery('select[name="rc_rb_year"]').val(rb_year);
+        jQuery('select[name="rc_rb_month"]').val(rb_month);
+        jQuery('select[name="rc_rb_day"]').val(rb_day);
+        jQuery('select[name="rc_rb_hour"]').val(rb_hour);
+        jQuery('select[name="rc_rb_minutes"]').val(rb_min);
+        jQuery('.rc-rollback-datetime-wrap').slideUp('normal');
+        jQuery('.rc-rollback-datetime-edit').show();
+        return false;
+    });
 });
 

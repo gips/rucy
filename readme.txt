@@ -37,6 +37,13 @@ You can install this plugin directly from your WordPress dashboard:
 
 == Changelog ==
 
+= 0.4.0 =
+* 2015-10-21
+* add post rollback function.
+* refactoring
+* add plugin icon.
+* change banner image.
+
 = 0.3.0 =
 * 2015-04-09
 * add "feature image" and "post date" to reservation update.
