@@ -2,8 +2,8 @@
 Contributors: gips-nita
 Tags: post, update content, update post, update page, schedule update, reserve update, reservation update, rucy, Rucy
 Requires at least: 3.5
-Tested up to: 4.1.1
-Stable tag: 0.3.0
+Tested up to: 4.3.1
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,34 +38,35 @@ You can install this plugin directly from your WordPress dashboard:
 == Changelog ==
 
 = 0.4.0 =
-* 2015-10-21
+2015-10-21
 * add post rollback function.
 * refactoring
 * add plugin icon.
 * change banner image.
 
 = 0.3.0 =
-* 2015-04-09
+2015-04-09
 * add "feature image" and "post date" to reservation update.
 * when reservation post update, fixed iframe tag and more html tag it will be removed.
 
 = 0.2.0 =
-* 2014-06-13
+2014-06-13
 * fixed Bugs.
 * change input type reservation datetime.
 * add check validation reservation datetime is past.
 
 = 0.1.2 =
-* 2014-05-04
+2014-05-04
 * add reservation datetime post updated messages.
 * add "revision" and "attachment" in invalid custom post type Setting
 * refactoring
 
 = 0.1.1 =
-* 2014-04-25 
+2014-04-25 
 * if accept checkbox unchecked , clean schedule update content. 
 * modified revision post_type do not add schedule update. 
 * add donation link.
 
 = 0.1.0 =
-* 2014-04-18 First release
+2014-04-18
+* First release
