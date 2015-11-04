@@ -22,7 +22,7 @@ class Class_Rucy_Cron {
         // set update content
         $updates = array( 
             'ID' => (int)$post_id,    
-            'post_content' => apply_filters( 'the_content', $post_metas->content ),
+            'post_content' => $post_metas->content,
         );
         // set update post date
         if ( $post_metas->accept_update == "1" ) {
