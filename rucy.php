@@ -35,7 +35,7 @@ class Rucy_Class {
         add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'add_setting_link' ) );
         $setting = new Class_Rucy_Setting();
         add_action( 'admin_menu', array( $setting, 'set_admin_menu' ) );
-        add_action( 'admin_notices', array( $setting, 'set_admin_notices' ) );
+        add_action( 'admin_init', array( $setting, 'setting_init' ) );
         $editor = new Class_Rucy_Editer();
         add_action( 'admin_menu', array( $editor, 'add_rucy_metabox' ) );
         add_action( 'save_post', array( $editor, 'save_rc_post_meta' ) );
@@ -54,8 +54,6 @@ class Rucy_Class {
         add_action( RC_CRON_HOOK, array( $cron, 'update_rc_reserved_content' ) );
         // deactivation this plugin
         register_deactivation_hook( __FILE__ , array( $this, 'uninstall_rucy' ) );
-        // uninstall this plugin
-        register_uninstall_hook( __FILE__, array( $this, 'uninstall_rucy' ) );
     }
     
     public function activate_plugin() {
@@ -124,7 +122,7 @@ class Rucy_Class {
     public function uninstall_rucy() {
         wp_clear_scheduled_hook( RC_CRON_HOOK );
         delete_option( RC_SETTING_OPTION_KEY );
-        delete_option( RC_VERSION );
+        delete_option( 'rucy_version' );
         $all_posts = get_posts( 'numberposts=-1&post_status=' );
         $component = new Class_Rucy_Component();
         $post_meta_keys = $component->get_post_meta_keys();
