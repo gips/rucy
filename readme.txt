@@ -3,7 +3,7 @@ Contributors: gips-nita
 Tags: post, update content, update post, update page, schedule update, reserve update, reservation update, rucy, Rucy
 Requires at least: 3.5
 Tested up to: 4.3.1
-Stable tag: 0.4.2
+Stable tag: 0.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,12 @@ You can install this plugin directly from your WordPress dashboard:
 
 
 == Changelog ==
+
+= 0.4.3 =
+
+2015-11-22
+
+* fixed Bugs in Setting Page.
 
 = 0.4.2 =
 
