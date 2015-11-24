@@ -3,7 +3,7 @@ Contributors: gips-nita
 Tags: post, update content, update post, update page, schedule update, reserve update, reservation update, rucy, Rucy
 Requires at least: 3.5
 Tested up to: 4.3.1
-Stable tag: 0.4.3
+Stable tag: 0.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,8 @@ You can automatically update the DateTime specified posts published by this plug
 Post and Page, specify custom post type is also possible.
 
 But in your WordPress, this plugin is a prerequisite is that the reservation can be posted (can use WP_CRON is required).
+
+GitHub Repository : https://github.com/gips/rucy
 
 == Installation ==
 
@@ -36,6 +38,12 @@ You can install this plugin directly from your WordPress dashboard:
 
 
 == Changelog ==
+
+= 0.4.4 =
+
+2015-11-25
+
+* modified error display at New Post and Quick Edit.(from GitHub pull-request)
 
 = 0.4.3 =
 
