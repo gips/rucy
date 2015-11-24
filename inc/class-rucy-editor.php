@@ -245,6 +245,9 @@ class Class_Rucy_Editer {
         if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return;
         }
+        if ( !isset( $_POST['post_type'] ) ) {
+            return;
+        }
         $accept_post_types = $component->get_support_post_type();
         if ( !in_array( $_POST['post_type'], $accept_post_types ) ) {
             return;
