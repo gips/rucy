@@ -249,6 +249,21 @@ class Class_Rucy_Editer {
         if ( !in_array( $_POST['post_type'], $accept_post_types ) ) {
             return;
         }
+        if (
+           !array_key_exists( 'rc_hour', $_POST )
+        && !array_key_exists( 'rc_minutes', $_POST )
+        && !array_key_exists( 'rc_month', $_POST )
+        && !array_key_exists( 'rc_day', $_POST )
+        && !array_key_exists( 'rc_year', $_POST )
+        && !array_key_exists( 'rc_rb_hour', $_POST )
+        && !array_key_exists( 'rc_rb_minutes', $_POST )
+        && !array_key_exists( 'rc_rb_month', $_POST )
+        && !array_key_exists( 'rc_rb_day', $_POST )
+        && !array_key_exists( 'rc_rb_year', $_POST )
+        ) {
+            return;
+        }
+
         $post_meta_keys = $component->get_post_meta_keys();
         $date = mktime( $_POST['rc_hour'], $_POST['rc_minutes'], 00, $_POST['rc_month'], $_POST['rc_day'], $_POST['rc_year'] );
         if( $date ) {
